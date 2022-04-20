@@ -124,7 +124,7 @@ VIOLET_COL = [TOK_SEMICOLON]
 # - przesunięcia są niepoprawnie przez co niektóre tokeny są omijane    # DONE
 # - ++ -- << >> etc. recognition
 # - html colouring (idk czy trzeba - jak będą tokeny to już w sumie dużo roboty nie ma tbh) # DONE
-# - omit characters between two quotes as it can be custom string etc. a = "124s asdac czx e124135" # not relevant
+# - omit characters between two quotes as it can be custom string etc. a = "124s asdac czx e124135" # TODO IN the future
 
 
 class Token:
@@ -155,14 +155,12 @@ def scanner(filepath):
             curr_char = lines[curr_pos]
         # omit whitespaces
         if curr_char in " \t\n":
-            # TODO: if enough time make formatting as in the source file with indents, breaklines etc.
-            #   adding whitespaces to the token list would be great but it doesnt actually work
-            # if curr_char == " ":
-            #     tokens_list.append(Token(TOK_SPACE, curr_char))
-            # elif curr_char == "\t":
-            #     tokens_list.append(Token(TOK_TAB, curr_char))
-            # elif curr_char == "\n" or "\r\n":
-            #     tokens_list.append(Token(TOK_BREAKLINE, curr_char))
+            if curr_char == " ":
+                tokens_list.append(Token(TOK_SPACE, curr_char))
+            elif curr_char == "\t":
+                tokens_list.append(Token(TOK_TAB, curr_char))
+            elif curr_char == "\n":
+                tokens_list.append(Token(TOK_BREAKLINE, curr_char))
             curr_pos += 1
             continue
 
@@ -349,7 +347,8 @@ def generateHTML(filename, tokens):
         for token in tokens:
             # generate coloring for the token
             tokenHTML = apply_token_colour(token)
-            f.write(tokenHTML + "\n")
+            # f.write(tokenHTML + "\n")
+            f.write(tokenHTML)
         f.write("</body></html>")
 
 
@@ -375,7 +374,8 @@ def apply_token_colour(token):
         color = "#DFFF00"
     elif token.code in VIOLET_COL:
         color = "#8d42f5"
-
+    elif token.code == TOK_BREAKLINE:
+        return "<br>"
     token_str = f"""<span style="color:{color};">""" + \
                 token.value + \
                 """</span>"""
@@ -388,8 +388,5 @@ if __name__ == "__main__":
     # print all tokens
     for token in tokens:
         print(token)
-    # print tokens values
-    for token in tokens:
-        print(token.value)
     # generate html from source file
     generateHTML(r"E:\python_projects\compilation_theory\scanner\result.html", tokens=tokens)
