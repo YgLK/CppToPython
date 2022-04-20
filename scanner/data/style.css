@@ -1,0 +1,15 @@
+body {
+  font-size:14px;
+  color:#808080;
+}
+.tab {
+    display: inline-block;
+    margin-left: 40px;
+}
+span.orange{
+    color:#FFA500
+}
+
+span.bottle_green{
+    color:#006a4e
+}

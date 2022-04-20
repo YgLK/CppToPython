@@ -70,7 +70,6 @@ TOK_VOID = "TOK_VOID"
 # endl
 TOK_ENDL = "TOK_ENDL"
 
-
 # ACCESS MODIFIERS
 # private
 TOK_PRIVATE = "TOK_PRIVATE"
@@ -78,7 +77,6 @@ TOK_PRIVATE = "TOK_PRIVATE"
 TOK_PROTECTED = "TOK_PROTECTED"
 # public
 TOK_PUBLIC = "TOK_PUBLIC"
-
 
 # DATA TYPES
 # int
@@ -93,6 +91,19 @@ TOK_STRING = "TOK_STRING"
 TOK_CHARACTER = "TOK_CHARACTER"
 # long
 TOK_LONG = "TOK_LONG"
+# html code
+html_string = """<!DOCTYPE html>
+<link rel="stylesheet" href="style.css">
+<html>
+<head>
+<title>Cpp code with syntax highlighting</title>
+</head>
+<body><p>"""
+
+html_string_end = """
+</p>
+</body>
+</html>"""
 
 
 # TODO:
@@ -111,7 +122,21 @@ class Token:
         return "({0}: {1})".format(self.code, self.value)
 
 
+def color(token: Token):
+    global html_string
+    if token.code in (TOK_INTEGER, TOK_DOUBLE, TOK_FLOAT, TOK_STRING, TOK_CHARACTER, TOK_LONG,
+                      TOK_WHILE, TOK_FOR, TOK_IF, TOK_ELSE, TOK_MAIN, TOK_USING, TOK_NAMESPACE, TOK_RETURN,
+                      TOK_BREAK, TOK_CLASS, TOK_CONTINUE, TOK_DELETE, TOK_VOID, TOK_PRIVATE, TOK_PROTECTED, TOK_PUBLIC):
+        html_string = html_string + "<span class=orange>" + str(token.value) + "</span>"
+
+    elif token.code in (TOK_QUOTE, TOK_VAR):
+        html_string = html_string + "<span class=bottle_green>" + str(token.value) + "</span>"
+    else:
+        html_string = html_string + str(token.value)
+
+
 def scanner(filepath):
+    global html_string
     # open .txt file
     with open(filepath) as file:
         lines = file.read().rstrip()
@@ -132,9 +157,23 @@ def scanner(filepath):
         else:
             curr_char = lines[curr_pos]
         # omit whitespaces
-        if curr_char in " \t\n":
+
+        if curr_char == " ":
             curr_pos += 1
+            html_string += " "
             continue
+        if curr_char == "\t":
+            curr_pos += 1
+            html_string += "\t"
+            continue
+        if curr_char == "\n":
+            curr_pos += 1
+            html_string += "<br>"
+            continue
+
+        # if curr_char in " \t\n":
+        #     curr_pos += 1
+        #     continue
 
         # create instance of the appropriate token
         if curr_char in "0123456789":
@@ -146,8 +185,10 @@ def scanner(filepath):
                 if len(lines) == curr_pos:
                     # add number token
                     tokens_list.append(Token(TOK_INT, number))
+                    color(tokens_list[-1])
                     # add end of file token
                     tokens_list.append(Token(TOK_EOF, "EOF"))
+                    color(tokens_list[-1])
                     return tokens_list
                 elif lines[curr_pos] in "0123456789":
                     number += lines[curr_pos]
@@ -162,11 +203,12 @@ def scanner(filepath):
                 # set current position to the position of last read number
                 else:
                     tokens_list.append(Token(TOK_INT, number))
+                    color(tokens_list[-1])
                     break
         # read token starting with
         elif (
-            curr_char
-            in "abcdefghijklmnopqrstuvwxyz" + "abcdefghijklmnopqrstuvwxyz".upper()
+                curr_char
+                in "abcdefghijklmnopqrstuvwxyz" + "abcdefghijklmnopqrstuvwxyz".upper()
         ):
             characters = curr_char
             curr_pos += 1
@@ -174,12 +216,13 @@ def scanner(filepath):
                 if len(lines) == curr_pos:
                     # add character token
                     tokens_list.append(Token(TOK_CHAR, characters))
+                    color(tokens_list[-1])
                     # add end of file token
                     tokens_list.append(Token(TOK_EOF, "EOF"))
                     return tokens_list
                 elif (
-                    lines[curr_pos] in "0123456789"
-                    or lines[curr_pos].lower() in "abcdefghijklmnopqrstuvwxyz"
+                        lines[curr_pos] in "0123456789"
+                        or lines[curr_pos].lower() in "abcdefghijklmnopqrstuvwxyz"
                 ):
                     characters += lines[curr_pos]
                     # move the cursor
@@ -188,18 +231,23 @@ def scanner(filepath):
                 else:
                     token = keyword_detect(characters)
                     tokens_list.append(Token(token, characters))
+                    color(tokens_list[-1])
                     break
         elif curr_char == '"':
             tokens_list.append(Token(TOK_QUOTE, curr_char))
+            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == ";":
             tokens_list.append(Token(TOK_SEMICOLON, curr_char))
+            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == "{":
             tokens_list.append(Token(TOK_LBRACE, curr_char))
+            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == "}":
             tokens_list.append(Token(TOK_RBRACE, curr_char))
+            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == "[":
             tokens_list.append(Token(TOK_LSQUARE, curr_char))
@@ -230,12 +278,15 @@ def scanner(filepath):
             curr_pos += 1
         elif curr_char == "(":
             tokens_list.append(Token(TOK_LPARENTH, curr_char))
+            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == ")":
             tokens_list.append(Token(TOK_RPARENTH, curr_char))
+            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == "\\":
             tokens_list.append(Token(TOK_RPARENTH, curr_char))
+            color(tokens_list[-1])
             curr_pos += 1
         else:
             raise ValueError(
@@ -305,3 +356,7 @@ if __name__ == "__main__":
     tokens = scanner(filepath)
     for token in tokens:
         print(token)
+
+    with open("data/cpp_code.html", 'w') as f:
+        f.write(html_string + html_string_end)
+        f.close()
