@@ -1,9 +1,9 @@
 int main()
 {
     char str[30];
-    cout<<"Enter Your Name: ";
+    cout<<"Enter Your Name ";
     cin>>str;
-    cout<<"Hello "<<str<<" Sir, This is codescracker.com!";
+    cout<<"Hello "<<str<<" Sir This is codescracker";
     cout<<endl;
     return 0;
 }

@@ -67,6 +67,8 @@ TOK_CONTINUE = "TOK_CONTINUE"
 TOK_DELETE = "TOK_DELETE"
 # void
 TOK_VOID = "TOK_VOID"
+# endl
+TOK_ENDL = "TOK_ENDL"
 
 
 # ACCESS MODIFIERS
@@ -116,12 +118,12 @@ def scanner(filepath):
     # list containing tokens
     tokens_list = []
     # current position
-    curr_pos = -1
+    curr_pos = 0
     # current read character
     curr_char = ""
     while True:
         # move further
-        curr_pos += 1
+        # curr_pos += 1
 
         # assign None to current character when EOF is met
         if len(lines) == curr_pos:
@@ -129,9 +131,9 @@ def scanner(filepath):
             return tokens_list
         else:
             curr_char = lines[curr_pos]
-
         # omit whitespaces
         if curr_char in " \t\n":
+            curr_pos += 1
             continue
 
         # create instance of the appropriate token
@@ -189,36 +191,52 @@ def scanner(filepath):
                     break
         elif curr_char == '"':
             tokens_list.append(Token(TOK_QUOTE, curr_char))
+            curr_pos += 1
         elif curr_char == ";":
             tokens_list.append(Token(TOK_SEMICOLON, curr_char))
+            curr_pos += 1
         elif curr_char == "{":
             tokens_list.append(Token(TOK_LBRACE, curr_char))
+            curr_pos += 1
         elif curr_char == "}":
             tokens_list.append(Token(TOK_RBRACE, curr_char))
+            curr_pos += 1
         elif curr_char == "[":
             tokens_list.append(Token(TOK_LSQUARE, curr_char))
+            curr_pos += 1
         elif curr_char == "]":
             tokens_list.append(Token(TOK_RSQUARE, curr_char))
+            curr_pos += 1
         elif curr_char == ">":
             tokens_list.append(Token(TOK_GTHAN, curr_char))
+            curr_pos += 1
         elif curr_char == "<":
             tokens_list.append(Token(TOK_LTHAN, curr_char))
+            curr_pos += 1
         elif curr_char == "+":
             tokens_list.append(Token(TOK_PLUS, curr_char))
+            curr_pos += 1
         elif curr_char == "+":
             tokens_list.append(Token(TOK_PLUS, curr_char))
+            curr_pos += 1
         elif curr_char == "-":
             tokens_list.append(Token(TOK_MINUS, curr_char))
+            curr_pos += 1
         elif curr_char == "*":
             tokens_list.append(Token(TOK_MUL, curr_char))
+            curr_pos += 1
         elif curr_char == "/":
             tokens_list.append(Token(TOK_DIV, curr_char))
+            curr_pos += 1
         elif curr_char == "(":
             tokens_list.append(Token(TOK_LPARENTH, curr_char))
+            curr_pos += 1
         elif curr_char == ")":
             tokens_list.append(Token(TOK_RPARENTH, curr_char))
+            curr_pos += 1
         elif curr_char == "\\":
             tokens_list.append(Token(TOK_RPARENTH, curr_char))
+            curr_pos += 1
         else:
             raise ValueError(
                 "Incorrect character "
@@ -271,10 +289,12 @@ def keyword_detect(word):
         return TOK_INTEGER
     elif word == "char":
         return TOK_CHARACTER
-    elif word == "string":
+    elif word == "str":
         return TOK_STRING
     elif word == "long":
         return TOK_LONG
+    elif word == "endl":
+        return TOK_ENDL
     # if no keyword is detected return variable token
     else:
         return TOK_VAR
