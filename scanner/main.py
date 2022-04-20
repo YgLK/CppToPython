@@ -6,11 +6,39 @@ TOK_MINUS = "TOK_MINUS"
 TOK_MUL = "TOK_MUL"
 # division token  '/'
 TOK_DIV = "TOK_DIV"
+# escape token
+TOK_ESC = "TOK_ESC"
 # parentheses tokens
 TOK_RPARENTH = "TOK_RPARENTH"
 TOK_LPARENTH = "TOK_LPARENTH"
 # end of file
 TOK_EOF = "TOK_EOF"
+# "
+TOK_QUOTE = "TOK_QUOTE"
+# >
+TOK_GTHAN = "TOK_GTHAN"
+# <
+TOK_LTHAN = "TOK_LTHAN"
+# variable token - it's not in keywords list
+# e.g. a, b, int_ger etc.
+TOK_VAR = "TOK_VAR"
+# character
+TOK_CHAR = "TOK_CHAR"
+# {
+TOK_LBRACE = "TOK_LBRACE"
+# }
+TOK_RBRACE = "TOK_RBRACE"
+# }
+TOK_RBRACE = "TOK_RBRACE"
+# ;
+TOK_SEMICOLON = "TOK_SEMICOLON"
+
+
+# TODO:
+# - keywords recognition
+# - ++ -- << >> etc. recognition
+# - html colouring (idk czy trzeba - jak będą tokeny to już w sumie dużo roboty nie ma tbh)
+
 
 class Token:
     def __init__(self, code_, value_):
@@ -63,11 +91,47 @@ def scanner(filepath):
                     number += lines[curr_pos]
                     # move the cursor
                     curr_pos += 1
+                elif lines[curr_pos].lower() in "abcdefghijklmnopqrstuvwxyz":
+                    # letters cannot occur after digits
+                    tokens_list.append("ERROR", f"Invalid token at the position: {curr_pos}")
+                    return
+                # set current position to the position of last read number
                 else:
+                    tokens_list.append(Token(TOK_INT, number))
                     break
-            # set current position to the position of last read number
-            curr_pos = curr_pos - 1
-            tokens_list.append(Token(TOK_INT, number))
+        # read token starting with
+        elif curr_char in "abcdefghijklmnopqrstuvwxyz" + "abcdefghijklmnopqrstuvwxyz".upper():
+            characters = curr_char
+            curr_pos += 1
+            while True:
+                if len(lines) == curr_pos:
+                    # add character token
+                    tokens_list.append(Token(TOK_CHAR, characters))
+                    # add end of file token
+                    tokens_list.append(Token(TOK_EOF, "EOF"))
+                    return tokens_list
+                elif lines[curr_pos] in "0123456789" or lines[curr_pos].lower() in "abcdefghijklmnopqrstuvwxyz":
+                    characters += lines[curr_pos]
+                    # move the cursor
+                    curr_pos += 1
+                # set current position to the position of last read number
+                else:
+                    tokens_list.append(Token(TOK_VAR, characters))
+                    break
+        elif curr_char == "\"":
+            tokens_list.append(Token(TOK_QUOTE, curr_char))
+        elif curr_char == ";":
+            tokens_list.append(Token(TOK_SEMICOLON, curr_char))
+        elif curr_char == "{":
+            tokens_list.append(Token(TOK_LBRACE, curr_char))
+        elif curr_char == "}":
+            tokens_list.append(Token(TOK_RBRACE, curr_char))
+        elif curr_char == ">":
+            tokens_list.append(Token(TOK_GTHAN, curr_char))
+        elif curr_char == "<":
+            tokens_list.append(Token(TOK_LTHAN, curr_char))
+        elif curr_char == "+":
+            tokens_list.append(Token(TOK_PLUS, curr_char))
         elif curr_char == "+":
             tokens_list.append(Token(TOK_PLUS, curr_char))
         elif curr_char == "-":
@@ -80,12 +144,15 @@ def scanner(filepath):
             tokens_list.append(Token(TOK_LPARENTH, curr_char))
         elif curr_char == ")":
             tokens_list.append(Token(TOK_RPARENTH, curr_char))
+        elif curr_char == "\\":
+            tokens_list.append(Token(TOK_RPARENTH, curr_char))
         else:
             raise ValueError("Incorrect character " + "\"" + str(curr_char) + "\"" + " at the index " + str(curr_pos))
 
 
+
 if __name__ == '__main__':
-    filepath = "data/to_scan.txt"
+    filepath = "data/cpp_code.txt"
     tokens = scanner(filepath)
     for token in tokens:
         print(token)
