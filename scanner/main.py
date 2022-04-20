@@ -2,15 +2,20 @@
 TOK_INT = "TOK_INT"
 TOK_PLUS = "TOK_PLUS"
 TOK_MINUS = "TOK_MINUS"
-# multiplication token  '*'
+# multiplication  '*'
 TOK_MUL = "TOK_MUL"
 # division token  '/'
 TOK_DIV = "TOK_DIV"
-# escape token
+# escape token '\'
 TOK_ESC = "TOK_ESC"
-# parentheses tokens
+# (
 TOK_RPARENTH = "TOK_RPARENTH"
+# )
 TOK_LPARENTH = "TOK_LPARENTH"
+# [ - left square bracket
+TOK_LSQUARE = "TOK_LSQUARE"
+# ] - right square bracket
+TOK_RSQUARE = "TOK_RSQUARE"
 # end of file
 TOK_EOF = "TOK_EOF"
 # "
@@ -19,8 +24,8 @@ TOK_QUOTE = "TOK_QUOTE"
 TOK_GTHAN = "TOK_GTHAN"
 # <
 TOK_LTHAN = "TOK_LTHAN"
-# variable token - it's not in keywords list
-# e.g. a, b, int_ger etc.
+# variable name token (it's not in keywords list)
+# e.g. a, b, int_variable etc.
 TOK_VAR = "TOK_VAR"
 # character
 TOK_CHAR = "TOK_CHAR"
@@ -28,16 +33,46 @@ TOK_CHAR = "TOK_CHAR"
 TOK_LBRACE = "TOK_LBRACE"
 # }
 TOK_RBRACE = "TOK_RBRACE"
-# }
-TOK_RBRACE = "TOK_RBRACE"
 # ;
 TOK_SEMICOLON = "TOK_SEMICOLON"
 
+# ------- KEYWORDS -------
+# while
+# for
+# if
+# else
+# cin
+# cout
+# main
+# using
+# namespace
+# break
+# class
+# continue
+# delete
+# void
+
+
+# ACCESS MODIFIERS
+# private
+# protected
+# public
+
+
+# DATA TYPES
+# int
+# double
+# float
+# string
+# char
+# long
+
 
 # TODO:
-# - keywords recognition
+# - przesunięcia są niepoprawnie przez co niektóre tokeny są omijane
 # - ++ -- << >> etc. recognition
 # - html colouring (idk czy trzeba - jak będą tokeny to już w sumie dużo roboty nie ma tbh)
+# - omit characters between two quotes as it can be custom string etc. a = "124s asdac czx e124135"
 
 
 class Token:
@@ -126,6 +161,10 @@ def scanner(filepath):
             tokens_list.append(Token(TOK_LBRACE, curr_char))
         elif curr_char == "}":
             tokens_list.append(Token(TOK_RBRACE, curr_char))
+        elif curr_char == "[":
+            tokens_list.append(Token(TOK_LSQUARE, curr_char))
+        elif curr_char == "]":
+            tokens_list.append(Token(TOK_RSQUARE, curr_char))
         elif curr_char == ">":
             tokens_list.append(Token(TOK_GTHAN, curr_char))
         elif curr_char == "<":
