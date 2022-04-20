@@ -118,6 +118,7 @@ LGREEN_COL = [TOK_INT, TOK_CHAR]
 PINK_COL = [TOK_RETURN, TOK_QUOTE]
 ORANGE_COL = [TOK_LBRACE, TOK_RBRACE, TOK_RSQUARE, TOK_LSQUARE, TOK_LPARENTH, TOK_RPARENTH, TOK_ESC]
 LEMON_COL = [TOK_PLUS, TOK_MINUS, TOK_DIV, TOK_MUL, TOK_GTHAN, TOK_LTHAN]
+VIOLET_COL = [TOK_SEMICOLON]
 
 # TODO:
 # - przesunięcia są niepoprawnie przez co niektóre tokeny są omijane    # DONE
@@ -340,7 +341,6 @@ def generateHTML(filename, tokens):
                 font-family: 'JetBrains Mono';
                 font-size: 40px;
                 color: white;
-        
             }
         </style>
         <body style="background-color:#2b2b2b;">
@@ -373,7 +373,8 @@ def apply_token_colour(token):
         color = "#E67E22"
     elif token.code in LEMON_COL:
         color = "#DFFF00"
-
+    elif token.code in VIOLET_COL:
+        color = "#8d42f5"
 
     token_str = f"""<span style="color:{color};">""" + \
                 token.value + \
