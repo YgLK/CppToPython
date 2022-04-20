@@ -1,6 +1,7 @@
 int main()
 {
     char str[30];
+    string hi;
     cout<<"Enter Your Name ";
     cin>>str;
     cout<<"Hello "<<str<<" Sir This is codescracker";

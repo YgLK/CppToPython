@@ -1,4 +1,6 @@
-# TOKENS
+# ----------------------------------------
+#       TOKENS
+# ----------------------------------------
 TOK_INT = "TOK_INT"
 # separate letter
 TOK_CHAR = "TOK_CHAR"
@@ -36,7 +38,10 @@ TOK_RBRACE = "TOK_RBRACE"
 # ;
 TOK_SEMICOLON = "TOK_SEMICOLON"
 
-# ------- KEYWORDS -------
+
+# -------------
+# KEYWORDS
+# -------------
 # while
 TOK_WHILE = "TOK_WHILE"
 # for
@@ -70,7 +75,6 @@ TOK_VOID = "TOK_VOID"
 # endl
 TOK_ENDL = "TOK_ENDL"
 
-
 # ACCESS MODIFIERS
 # private
 TOK_PRIVATE = "TOK_PRIVATE"
@@ -79,8 +83,9 @@ TOK_PROTECTED = "TOK_PROTECTED"
 # public
 TOK_PUBLIC = "TOK_PUBLIC"
 
-
+# -------------
 # DATA TYPES
+# -------------
 # int
 TOK_INTEGER = "TOK_INTEGER"
 # double
@@ -94,12 +99,31 @@ TOK_CHARACTER = "TOK_CHARACTER"
 # long
 TOK_LONG = "TOK_LONG"
 
+# WHITESPACES
+TOK_SPACE = "TOK_SPACE"
+TOK_BREAKLINE = "TOK_BREAKLINE"
+TOK_TAB = "TOK_TAB"
+
+
+# ----------------------------------------
+#       TOKEN COLORS
+# ----------------------------------------
+# colouring style for each token type
+GREEN_COL = [TOK_COUT, TOK_CIN]
+DBLUE_COL = [TOK_INTEGER, TOK_CHARACTER, TOK_DOUBLE, TOK_DOUBLE, TOK_FLOAT, TOK_LONG]
+YELLOW_COL = [TOK_MAIN]
+# L means light
+LBLUE_COL = [TOK_STRING]
+LGREEN_COL = [TOK_INT, TOK_CHAR]
+PINK_COL = [TOK_RETURN, TOK_QUOTE]
+ORANGE_COL = [TOK_LBRACE, TOK_RBRACE, TOK_RSQUARE, TOK_LSQUARE, TOK_LPARENTH, TOK_RPARENTH, TOK_ESC]
+LEMON_COL = [TOK_PLUS, TOK_MINUS, TOK_DIV, TOK_MUL, TOK_GTHAN, TOK_LTHAN]
 
 # TODO:
-# - przesunięcia są niepoprawnie przez co niektóre tokeny są omijane
+# - przesunięcia są niepoprawnie przez co niektóre tokeny są omijane    # DONE
 # - ++ -- << >> etc. recognition
-# - html colouring (idk czy trzeba - jak będą tokeny to już w sumie dużo roboty nie ma tbh)
-# - omit characters between two quotes as it can be custom string etc. a = "124s asdac czx e124135"
+# - html colouring (idk czy trzeba - jak będą tokeny to już w sumie dużo roboty nie ma tbh) # DONE
+# - omit characters between two quotes as it can be custom string etc. a = "124s asdac czx e124135" # not relevant
 
 
 class Token:
@@ -122,9 +146,6 @@ def scanner(filepath):
     # current read character
     curr_char = ""
     while True:
-        # move further
-        # curr_pos += 1
-
         # assign None to current character when EOF is met
         if len(lines) == curr_pos:
             tokens_list.append(Token(TOK_EOF, "EOF"))
@@ -133,6 +154,14 @@ def scanner(filepath):
             curr_char = lines[curr_pos]
         # omit whitespaces
         if curr_char in " \t\n":
+            # TODO: if enough time make formatting as in the source file with indents, breaklines etc.
+            #   adding whitespaces to the token list would be great but it doesnt actually work
+            # if curr_char == " ":
+            #     tokens_list.append(Token(TOK_SPACE, curr_char))
+            # elif curr_char == "\t":
+            #     tokens_list.append(Token(TOK_TAB, curr_char))
+            # elif curr_char == "\n" or "\r\n":
+            #     tokens_list.append(Token(TOK_BREAKLINE, curr_char))
             curr_pos += 1
             continue
 
@@ -165,8 +194,8 @@ def scanner(filepath):
                     break
         # read token starting with
         elif (
-            curr_char
-            in "abcdefghijklmnopqrstuvwxyz" + "abcdefghijklmnopqrstuvwxyz".upper()
+                curr_char
+                in "abcdefghijklmnopqrstuvwxyz" + "abcdefghijklmnopqrstuvwxyz".upper()
         ):
             characters = curr_char
             curr_pos += 1
@@ -178,8 +207,8 @@ def scanner(filepath):
                     tokens_list.append(Token(TOK_EOF, "EOF"))
                     return tokens_list
                 elif (
-                    lines[curr_pos] in "0123456789"
-                    or lines[curr_pos].lower() in "abcdefghijklmnopqrstuvwxyz"
+                        lines[curr_pos] in "0123456789"
+                        or lines[curr_pos].lower() in "abcdefghijklmnopqrstuvwxyz"
                 ):
                     characters += lines[curr_pos]
                     # move the cursor
@@ -289,7 +318,7 @@ def keyword_detect(word):
         return TOK_INTEGER
     elif word == "char":
         return TOK_CHARACTER
-    elif word == "str":
+    elif word == "string":
         return TOK_STRING
     elif word == "long":
         return TOK_LONG
@@ -300,8 +329,66 @@ def keyword_detect(word):
         return TOK_VAR
 
 
+def generateHTML(filename, tokens):
+    with open(filename, 'w') as f:
+        # set html style
+        f.write("""
+        <!DOCTYPE html><html>
+        <link href='https://fonts.googleapis.com/css?family=JetBrains Mono' rel='stylesheet'>
+        <style>
+            body {
+                font-family: 'JetBrains Mono';
+                font-size: 40px;
+                color: white;
+        
+            }
+        </style>
+        <body style="background-color:#2b2b2b;">
+        """)
+        # perform file operations
+        for token in tokens:
+            # generate coloring for the token
+            tokenHTML = apply_token_colour(token)
+            f.write(tokenHTML + "\n")
+        f.write("</body></html>")
+
+
+def apply_token_colour(token):
+    # default is white
+    color = 'white'
+    if token.code in GREEN_COL:
+        color = "#82E0AA"
+    elif token.code in DBLUE_COL:
+        color = "#3498DB"
+    elif token.code in YELLOW_COL:
+        color = "#F7DC6F"
+    # light blue color
+    elif token.code in LBLUE_COL:
+        color = "#AED6F1"
+    elif token.code in LGREEN_COL:
+        color = "#A9DFBF"
+    elif token.code in PINK_COL:
+        color = "#DE3163"
+    elif token.code in ORANGE_COL:
+        color = "#E67E22"
+    elif token.code in LEMON_COL:
+        color = "#DFFF00"
+
+
+    token_str = f"""<span style="color:{color};">""" + \
+                token.value + \
+                """</span>"""
+    return token_str
+
+
 if __name__ == "__main__":
     filepath = "data/cpp_code.txt"
     tokens = scanner(filepath)
+    # print all tokens
     for token in tokens:
         print(token)
+    # print tokens values
+    for token in tokens:
+        print(token.value)
+    # generate html from source file
+    generateHTML(r"E:\python_projects\compilation_theory\scanner\result.html", tokens=tokens)
