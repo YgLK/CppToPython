@@ -110,7 +110,7 @@ TOK_TAB = "TOK_TAB"
 # ----------------------------------------
 # colouring style for each token type
 GREEN_COL = [TOK_COUT, TOK_CIN]
-DBLUE_COL = [TOK_INTEGER, TOK_CHARACTER, TOK_DOUBLE, TOK_DOUBLE, TOK_FLOAT, TOK_LONG]
+DBLUE_COL = [TOK_INTEGER, TOK_CHARACTER, TOK_DOUBLE, TOK_FLOAT, TOK_LONG]
 YELLOW_COL = [TOK_MAIN]
 # L means light
 LBLUE_COL = [TOK_STRING]
@@ -119,12 +119,6 @@ PINK_COL = [TOK_RETURN, TOK_QUOTE]
 ORANGE_COL = [TOK_LBRACE, TOK_RBRACE, TOK_RSQUARE, TOK_LSQUARE, TOK_LPARENTH, TOK_RPARENTH, TOK_ESC]
 LEMON_COL = [TOK_PLUS, TOK_MINUS, TOK_DIV, TOK_MUL, TOK_GTHAN, TOK_LTHAN]
 VIOLET_COL = [TOK_SEMICOLON]
-
-# TODO:
-# - przesunięcia są niepoprawnie przez co niektóre tokeny są omijane    # DONE
-# - ++ -- << >> etc. recognition
-# - html colouring (idk czy trzeba - jak będą tokeny to już w sumie dużo roboty nie ma tbh) # DONE
-# - omit characters between two quotes as it can be custom string etc. a = "124s asdac czx e124135" # TODO IN the future
 
 
 class Token:
@@ -139,21 +133,21 @@ class Token:
 def scanner(filepath):
     # open .txt file
     with open(filepath) as file:
-        lines = file.read().rstrip()
-    # list containing tokens
+        lines = file.read()
+    # init list containing tokens
     tokens_list = []
     # current position
     curr_pos = 0
     # current read character
     curr_char = ""
     while True:
-        # assign None to current character when EOF is met
+        # if no characters left
         if len(lines) == curr_pos:
             tokens_list.append(Token(TOK_EOF, "EOF"))
             return tokens_list
         else:
             curr_char = lines[curr_pos]
-        # omit whitespaces
+        # whitespaces
         if curr_char in " \t\n":
             if curr_char == " ":
                 tokens_list.append(Token(TOK_SPACE, curr_char))
@@ -163,7 +157,6 @@ def scanner(filepath):
                 tokens_list.append(Token(TOK_BREAKLINE, curr_char))
             curr_pos += 1
             continue
-
         # create instance of the appropriate token
         if curr_char in "0123456789":
             # check if number has more than 1 digit
@@ -184,7 +177,7 @@ def scanner(filepath):
                 elif lines[curr_pos].lower() in "abcdefghijklmnopqrstuvwxyz":
                     # letters cannot occur after digits
                     tokens_list.append(
-                        "ERROR", f"Invalid token at the position: {curr_pos}"
+                       ("ERROR", f"Invalid token at the position: {curr_pos}")
                     )
                     return
                 # set current position to the position of last read number
@@ -199,6 +192,7 @@ def scanner(filepath):
             characters = curr_char
             curr_pos += 1
             while True:
+                # if no characters left
                 if len(lines) == curr_pos:
                     # add character token
                     tokens_list.append(Token(TOK_CHAR, characters))
@@ -212,7 +206,7 @@ def scanner(filepath):
                     characters += lines[curr_pos]
                     # move the cursor
                     curr_pos += 1
-                # set current position to the position of last read number
+                # if whitespace is the next character
                 else:
                     token = keyword_detect(characters)
                     tokens_list.append(Token(token, characters))
@@ -271,7 +265,7 @@ def scanner(filepath):
                 + '"'
                 + str(curr_char)
                 + '"'
-                + " at the index "
+                + " - position "
                 + str(curr_pos)
             )
 
@@ -337,7 +331,7 @@ def generateHTML(filename, tokens):
         <style>
             body {
                 font-family: 'JetBrains Mono';
-                font-size: 40px;
+                font-size: 30px;
                 color: white;
             }
         </style>
