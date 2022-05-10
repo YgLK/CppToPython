@@ -1,72 +1,80 @@
 # compilation_theory
 
-| Token             |                                         Wartość                                      |
-| ----------------- | :------------------------------------------------------------------------------------------: |
-|INT|`int`|
-|CHAR|`char`|
-|PLUS|`+`|
-|MINUS|`-`|
-|MUL|`*`|
-|DIV|`/`|
-|ESC|`\`|
-|RPARENTH|`)`|
-|LPARENTH|`(`|
-|LSQUARE|`[`|
-|RSQUARE|`]`|
-|QUOTE|`"`|
-|GTHAN|`>`|
-|LTHAN|`<`|
-|VARNAME|`^[a-zA-Z$][a-zA-Z_$0-9]*$`|
-|LBRACE|`{`|
-|RBRACE|`}`|
-|COLON|`:`|
-|SEMICOLON|`;`|
-|COMMA|`,`|
-|EQUAL|`=`|
-|DOT|`.`|
-|LBIT| `<<`|
-|RBIT| `>>`|
-|AND| `&&`|
-|OR|`||`|
-| | | 
-| -- Keyword -- | -- Keyword  values -- |
-|WHILE|`while`|
-|FOR|`for`|
-|IF|`if`|
-|ELSE|`else`|
-|CIN|`cin`|
-|COUT|`cout`|
-|MAIN|`main`|
-|USING|`using`|
-|NAMESPACE|`namespace`|
-|RETURN|`return`|
-|BREAK|`break`|
-|CONTINUE|`continue`|
-|DELETE|`delete`|
-|VOID|`void`|
-|ENDL|`endl`|
-|SPACE|` `|
-|BREAKLINE|`\n`|
-|TAB|`\t`|
+| Token         |   Wartość   |
+| ------------- | :---------: |
+| PLUS          |     `+`     |
+| MINUS         |     `-`     |
+| DPLUS         |    `++`     |
+| DMINUS        |    `--`     |
+| MUL           |     `*`     |
+| DIV           |     `/`     |
+| MOD           |     `%`     |
+| ESC           |     `\`     |
+| RPARENTH      |     `)`     |
+| LPARENTH      |     `(`     |
+| LSQUARE       |     `[`     |
+| RSQUARE       |     `]`     |
+| LBRACE        |     `{`     |
+| RBRACE        |     `}`     |
+| COLON         |     `:`     |
+| SEMICOLON     |     `;`     |
+| COMMA         |     `,`     |
+| QUOTE         |     `"`     |
+| APOSTROPHE    |     `'`     |
+| DOT           |     `.`     |
+| GTHAN         |     `>`     |
+| LTHAN         |     `<`     |
+| NOT           |     `!`     |
+| EQUAL         |     `=`     |
+| DEQUAL        |    `==`     |
+| GREATER_EQUAL |    `>=`     |
+| LESS_EQUAL    |    `<=`     |
+| NOT_EQUAL     |    `!=`     |
+| LBIT          |    `<<`     |
+| RBIT          |    `>>`     |
+| INT           |    `int`    |
+| FLOAT         |   `float`   |
+| CHAR          |   `char`    |
+| STRING        |  `string`   |
+| BOOL          |   `bool`    |
+| VOID          |   `void`    |
+| WHILE         |   `while`   |
+| FOR           |    `for`    |
+| IF            |    `if`     |
+| ELSE          |   `else`    |
+| CIN           |    `cin`    |
+| COUT          |   `cout`    |
+| MAIN          |   `main`    |
+| USING         |   `using`   |
+| NAMESPACE     | `namespace` |
+| STD           |    `std`    |
+| INCLUDE       |  `include`  |
+| HASH          |     `#`     |
+| RETURN        |  `return`   |
+| BREAK         |   `break`   |
+| CONTINUE      | `continue`  |
+| DELETE        |  `delete`   |
+| ENDL          |   `endl`    |
+| SPACE         |     ` `     |
+| BREAKLINE     |    `\n`     |
+| TAB           |    `\t`     |
+<!-- 
+| AND           |    `&&`     |
+| OR            |      `      |  | ` |
+| CLASS         |      `class`         |
+| PUBLIC        |      `public`        |
+| PRIVATE       |      `private`       |
+| PROTECTED     |      `protected`     | 
+ CONST         |      `const`         |
+| STATIC        |      `static`        |
+| VIRTUAL       |      `virtual`       | 
+-->
 
-| Token | Regexp |
-| ----------------- | :------------------------------------------------------------------------------------------: |
-|VARNAME|`^[a-zA-Z$][a-zA-Z_$0-9]*$`|
-|FLOAT|`^-?\d*\.{0,1}\d+$`|
-|INT|`^-?\d+$`|
-<!-- |ELSE|`else`|
-|CIN|`cin`|
-|COUT|`cout`|
-|MAIN|`main`|
-|USING|`using`|
-|NAMESPACE|`namespace`|
-|RETURN|`return`|
-|BREAK|`break`|
-|CONTINUE|`continue`|
-|DELETE|`delete`|
-|VOID|`void`|
-|ENDL|`endl`|
-|SPACE|` `|
-|BREAKLINE|`\n`|
-|TAB|`\t`|
--- todo -- -->
+| Token      |           Regexp            |
+| ---------- | :-------------------------: |
+| VARNAME    | `^[a-zA-Z$][a-zA-Z_$0-9]*$` |
+| FLOATVAR   |     `^-?\d*\.{0,1}\d+$`     |
+| INTVAR     |          `^-?\d+$`          |
+| CHARVAR    |           `^'.'$`           |
+| STRINGVAR  |          `^".*"$`           |
+| COMMENTVAR |          `^\/\/.*`          |
