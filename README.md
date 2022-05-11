@@ -1,6 +1,6 @@
 # compilation_theory
 
-| Token         |   Wartość   |
+| Token         |   Kod   |
 | ------------- | :---------: |
 | PLUS          |     `+`     |
 | MINUS         |     `-`     |
@@ -58,6 +58,10 @@
 | SPACE         |     ` `     |
 | BREAKLINE     |    `\n`     |
 | TAB           |    `\t`     |
+| CLASS         |      `class`         |
+| PUBLIC        |      `public`        |
+| PRIVATE       |      `private`       |
+| PROTECTED     |      `protected`     | 
 <!-- 
 | AND           |    `&&`     |
 | OR            |      `      |  | ` |
@@ -75,6 +79,5 @@
 | VARNAME    | `^[a-zA-Z$][a-zA-Z_$0-9]*$` |
 | FLOATVAR   |     `^-?\d*\.{0,1}\d+$`     |
 | INTVAR     |          `^-?\d+$`          |
-| CHARVAR    |           `^'.'$`           |
 | STRINGVAR  |          `^".*"$`           |
 | COMMENTVAR |          `^\/\/.*`          |
