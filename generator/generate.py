@@ -1,55 +1,56 @@
 # fmt: off
 tokens = [
     # + - ++  --  *   /   %   \   )   (
-    'PLUS','MINUS','DPLUS','DMINUS','MUL','DIV','MOD',
+    'PLUS', 'MINUS', 'DPLUS', 'DMINUS', 'MUL', 'DIV', 'MOD',
 
     # \  )  (   [     ]    {   } 
-    'ESC','RPARENTH','LPARENTH', 'LSQUARE','RSQUARE','LBRACE','RBRACE',
+    'ESC', 'RPARENTH', 'LPARENTH', 'LSQUARE', 'RSQUARE', 'LBRACE', 'RBRACE',
     #  :   ;   ,   "   '   . 
-    'COLON','SEMICOLON','COMMA','QUOTE','APOSTROPHE','DOT',
+    'COLON', 'SEMICOLON', 'COMMA', 'QUOTE', 'APOSTROPHE', 'DOT',
 
     # > < ! ==  == >= <= != << >>
-    'GTHAN','LTHAN','NOT','EQUAL','DEQUAL','GREATER_EQUAL','LESS_EQUAL','NOT_EQUAL',
-    
+    'GTHAN', 'LTHAN', 'NOT', 'EQUAL', 'DEQUAL', 'GREATER_EQUAL', 'LESS_EQUAL', 'NOT_EQUAL',
+
     # << >>
-    'LBIT','RBIT',
+    'LBIT', 'RBIT',
 
     # int float char string bool void 
-    'INT','FLOAT','CHAR','STRING','BOOL','VOID',
-    
+    'INT', 'FLOAT', 'CHAR', 'STRING', 'BOOL', 'VOID',
+
     # while for if else
-    'WHILE','FOR','IF','ELSE',
+    'WHILE', 'FOR', 'IF', 'ELSE',
 
     # cin cout main using namespace std include #
-    'CIN','COUT','MAIN','USING','NAMESPACE','STD','INCLUDE','HASH',
-    
+    'CIN', 'COUT', 'MAIN', 'USING', 'NAMESPACE', 'STD', 'INCLUDE', 'HASH',
+
     # return break
-    'RETURN','BREAK',
+    'RETURN', 'BREAK',
 
     # continue delete endl ' ' \n \t
-    'CONTINUE','DELETE','ENDL','SPACE','BREAKLINE','TAB',
+    'CONTINUE', 'DELETE', 'ENDL', 'SPACE', 'BREAKLINE', 'TAB',
     # class, public, private, protected
-    'CLASS','PUBLIC','PRIVATE','PROTECTED',
+    'CLASS', 'PUBLIC', 'PRIVATE', 'PROTECTED',
 
     # VALUES - regex
-    # variable name value    
-    'VARNAME',
-    # float number
-    'FLOATVAR',
     # int number
     'INTVAR',
+    # variable name value    
+    'ID',
+    # float number
+    'FLOATVAR',
+
     # string/text value
     'STRINGVAR',
     # comment value
     'COMMENTVAR'
 
-# | Token      |           Regexp            |
-# | ---------- | :-------------------------: |
-# | VARNAME    | `^[a-zA-Z$][a-zA-Z_$0-9]*$` |
-# | FLOATVAR   |     `^-?\d*\.{0,1}\d+$`     |
-# | INTVAR     |          `^-?\d+$`          |
-# | STRINGVAR  |          `^".*"$`           |
-# | COMMENTVAR |          `^\/\/.*`          |
+    # | Token      |           Regexp            |
+    # | ---------- | :-------------------------: |
+    # | VARNAME    | `^[a-zA-Z$][a-zA-Z_$0-9]*$` |
+    # | FLOATVAR   |     `^-?\d*\.{0,1}\d+$`     |
+    # | INTVAR     |          `^-?\d+$`          |
+    # | STRINGVAR  |          `^".*"$`           |
+    # | COMMENTVAR |          `^\/\/.*`          |
 ]
 # fmt: on
 
@@ -125,9 +126,23 @@ t_PROTECTED = r"protected"
 # # variable name value
 # t_VARNAME = r"[a-zA-Z$][a-zA-Z_$0-9]*"
 # text value
-t_STRINGVAR = r"^\".*\"$"
+t_STRINGVAR = r'\"([^\\\n]|(\\.))*?\"'
 # comment
 t_COMMENTVAR = r"^\/\/.*"
+
+reserved = {
+    'if': 'IF',
+    'then': 'THEN',
+    'else': 'ELSE',
+    'while': 'WHILE',
+    'int': 'INT',
+    'main': 'MAIN',
+    'char': 'CHAR',
+    'cout': 'COUT',
+    'string': 'STRING',
+    'cin':'CIN'
+    # TODO comlete the reserved tokens
+}
 
 
 def t_INTVAR(t):
@@ -145,13 +160,19 @@ def t_FLOATVAR(t):
     try:
         t.value = float(t.value)
     except ValueError:
-        print("Integer value too large %d", t.value)
+        print("Float value too large %d", t.value)
         t.value = 0
     return t
 
 
 # Ignored characters
 t_ignore = " \t"
+
+
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    t.type = reserved.get(t.value, 'ID')  # Check for reserved words
+    return t
 
 
 def t_newline(t):
@@ -254,15 +275,15 @@ int main()
 {
     char str[30];
     string hi;
-    cout<<"Enter Your Name ";
+    cout<<"Enter Your Name "<<\n;
     cin>>str;
     cout<<"Hello "<<str<<"This is sample code, 152.32";
     cout<<endl;
     return 0;
+    
 }
 """
 lex.input(test_input)
-
 
 while True:
     tok = lex.token()
