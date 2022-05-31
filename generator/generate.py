@@ -228,7 +228,6 @@ precedence = (
     ),
     ("left", "PLUS", "MINUS"),
     ("left", "MUL", "DIV", "MOD"),
-    # ("right", "NOT"),
     ("nonassoc", "DPLUS", "DMINUS"),
     ("left", "EQUAL"),
     ("right", "CLASS", "PRIVATE", "PROTECTED", "PUBLIC"),
@@ -236,55 +235,6 @@ precedence = (
 
 # dictionary of names
 names = {}
-
-
-# def p_statement_assign(t):
-#     "statement : NAME EQUALS expression"
-#     names[t[1]] = t[3]
-
-
-# def p_statement_expr(t):
-#     "statement : expression"
-#     print(t[1])
-
-
-# def p_expression_binop(t):
-#     """expression : expression PLUS expression
-#     | expression MINUS expression
-#     | expression TIMES expression
-#     | expression DIVIDE expression"""
-#     if t[2] == "+":
-#         t[0] = t[1] + t[3]
-#     elif t[2] == "-":
-#         t[0] = t[1] - t[3]
-#     elif t[2] == "*":
-#         t[0] = t[1] * t[3]
-#     elif t[2] == "/":
-#         t[0] = t[1] / t[3]
-
-
-# def p_expression_uminus(t):
-#     "expression : MINUS expression %prec UMINUS"
-#     t[0] = -t[2]
-
-
-# def p_expression_group(t):
-#     "expression : LPAREN expression RPAREN"
-#     t[0] = t[2]
-
-
-# def p_expression_number(t):
-#     "expression : NUMBER"
-#     t[0] = t[1]
-
-
-# def p_expression_name(t):
-#     "expression : NAME"
-#     try:
-#         t[0] = names[t[1]]
-#     except LookupError:
-#         print("Undefined name '%s'" % t[1])
-#         t[0] = 0
 
 
 def p_error(t):
@@ -335,23 +285,33 @@ def p_main_func(t):
 def p_parameters(t):
     """parameters : type VARNAME
     | type VARNAME COMMA parameters"""
-    # t[0] = [t[1], t[2]]
-    # print(t[0])
-    # print(t[1])
-    # print(t[2])
+    if len(t) == 5:
+        t[0] = [t[2]] + t[4]
+    else:
+        t[0] = [t[2]]
 
 
 # "if_statement" = 'IF' 'LPARENTH' "condition" 'RPARENTH' 'LBRACE' "func_block" 'RBRACE' ["else_block"]
 def p_if_statement(t):
     """if_statement : IF LPARENTH condition RPARENTH LBRACE func_block RBRACE else_block
     | IF LPARENTH condition RPARENTH LBRACE func_block RBRACE"""
-    # pass
+    if len(t) == 9:
+        if t[3] == True:
+            t[0] = t[5]
+        else:
+            t[0] = t[8]
+    elif len(t) == 8:
+        if t[3] == True:
+            t[0] = t[5]
+        # else:
+        #     t[0] = []
 
 
 # "else_block" = 'ELSE' 'LBRACE' "func_block" 'RBRACE'
 def p_else_block(t):
     """else_block : ELSE LBRACE func_block RBRACE"""
     # pass
+    t[0] = t[3]
 
 
 # "condition" = ('VARNAME' | "var_value") "comparator" ('VARNAME' | "var_value")
@@ -360,18 +320,22 @@ def p_condition(t):
     | VARNAME comparator VARNAME
     | VARNAME comparator var_value
     | var_value comparator VARNAME"""
-    # if t[2] == "==":
-    #     t[0] = t[1] == t[3]
-    # elif t[2] == "!=":
-    #     t[0] = t[1] != t[3]
-    # elif t[2] == ">":
-    #     t[0] = t[1] > t[3]
-    # elif t[2] == "<":
-    #     t[0] = t[1] < t[3]
-    # elif t[2] == ">=":
-    #     t[0] = t[1] >= t[3]
-    # elif t[2] == "<=":
-    #     t[0] = t[1] <= t[3]
+    try:
+        if t[2] == "==":
+            t[0] = t[1] == t[3]
+        elif t[2] == "!=":
+            t[0] = t[1] != t[3]
+        elif t[2] == ">":
+            t[0] = t[1] > t[3]
+        elif t[2] == "<":
+            t[0] = t[1] < t[3]
+        elif t[2] == ">=":
+            t[0] = t[1] >= t[3]
+        elif t[2] == "<=":
+            t[0] = t[1] <= t[3]
+    except TypeError:
+        print("Error: Cannot compare int and str types")
+        t[0] = False
 
 
 # "while_statement" = 'WHILE' 'LPARENTH' "condition" 'RPARENTH' 'LBRACE' "func_block" 'RBRACE'
@@ -399,13 +363,14 @@ def p_class(t):
 def p_return_satement(t):
     """return_statement : RETURN var_value SEMICOLON
     | RETURN SEMICOLON"""
-    # t[0] = t[2]
+    t[0] = t[2]
 
 
 # "assign_var" = 'VARNAME' EQUAL "var_value" SEMICOLON
 def p_assign_var(t):
-    "assign_var : VARNAME EQUAL var_value SEMICOLON"
-    # names[t[1]] = t[3]
+    """assign_var : VARNAME EQUAL var_value SEMICOLON
+    | VARNAME EQUAL calculation SEMICOLON"""
+    names[t[1]] = t[3]
 
 
 # "variable_def" = "declare_var" | "declare_assign_var"
@@ -417,14 +382,16 @@ def p_variable_def(t):
 
 # "declare_assign_var" = "type" 'VARNAME' EQUAL "var_value" SEMICOLON
 def p_declare_assign_var(t):
-    """declare_assign_var : type VARNAME EQUAL var_value SEMICOLON"""
-    # t[0] = t[1], t[2], t[4]
+    """declare_assign_var : type VARNAME EQUAL var_value SEMICOLON
+    | type VARNAME EQUAL calculation SEMICOLON"""
+    names[t[2]] = t[4]
 
 
 # "declare_var" = "type" 'VARNAME' SEMICOLON
 def p_declare_var(t):
     """declare_var : type VARNAME SEMICOLON"""
-    # print(t[1], t[2])
+    # create default value of variable as 0
+    names[t[2]] = 0
 
 
 # "class_variables" = ["access_modifier"] 'SEMICOLON'  {"variable_def"}
@@ -461,8 +428,6 @@ def p_access_modifier(t):
 
 # "func_block" = ({"variable_def" | "if_statement" | "while_statement" | "for_statement | "print_out" | "cin_in" | "variable_def" | 'VARNAME' EQUAL "calculation" 'SEMICOLON' } | "return_statement")
 # "func_block" = statement  | statement return_statement | "return_statement")
-
-
 def p_func_block(t):
     """func_block : statement
     | statement return_statement
@@ -487,21 +452,30 @@ def p_statement(t):
 # "print_out" = 'COUT' "cout_expression_string" 'SEMICOLON'
 def p_print_out(t):
     """print_out : COUT cout_expression_string SEMICOLON"""
-    # print(t[3])
+    print(t[2])
 
 
 # "cout_expression_string" = 'cout_expression' "cout_expression_string" | 'cout_expression'
 def p_cout_expression_string(t):
     """cout_expression_string : cout_expression cout_expression_string
     | cout_expression"""
-    # t[0] = t[1] + t[2]
-    # print(t[0])
+    if len(t) == 3:
+        if t[1] == "endl":
+            t[1] = "\n"
+        if t[2] == "endl":
+            t[2] = "\n"
+        # cut "" signs from string
+        t[0] = t[1].replace('"', "") + t[2].replace('"', "")
+    else:
+        if t[1] == "endl":
+            t[1] = "\n"
+        t[0] = t[1].replace('"', "")
 
 
 # "cout_expression" = 'LBIT' "printable"
 def p_cout_expression(t):
     """cout_expression : LBIT printable"""
-    # print(t[2])
+    t[0] = t[2]
 
 
 # "printable" = var_value | VARNAME | 'ENDL' | 'STRINGVAR'
@@ -511,32 +485,58 @@ def p_printable(t):
     | ENDL
     | STRINGVAR"""
     # print(t[1])
-    # t[0] = t[1]
+    t[0] = t[1]
+    # if t[1] in names.keys:
+    #     t[0] = names[t[1]]
+    # else:
+    #     t[0] = t[1]
 
 
 # "calculation" = "number" "math_operator" "number"
 def p_calculation(t):
     "calculation : number math_operator number"
-    # if t[2] == "+":
-    #     t[0] = t[1] + t[3]
-    # elif t[2] == "-":
-    #     t[0] = t[1] - t[3]
-    # elif t[2] == "*":
-    #     t[0] = t[1] * t[3]
-    # elif t[2] == "/":
-    #     t[0] = t[1] / t[3]
-    # elif t[2] == "%":
-    #     t[0] = t[1] % t[3]
-    # elif t[2] == "^":
-    #     t[0] = t[1] ** t[3]
-    # elif t[2] == "//":
-    #     t[0] = t[1] // t[3]
+    if type(t[1]) != "int":
+        if t[1] in names.keys():
+            t[1] = names[t[1]]
+        else:
+            try:
+                t[1] = int(t[1])
+            except ValueError:
+                return
+    if type(t[3]) != "int":
+        if t[3] in names.keys():
+            t[3] = names[t[1]]
+        else:
+            try:
+                t[3] = int(t[3])
+            except ValueError:
+                return
+    try:
+        if t[2] == "+":
+            t[0] = t[1] + t[3]
+        elif t[2] == "-":
+            t[0] = t[1] - t[3]
+        elif t[2] == "*":
+            t[0] = t[1] * t[3]
+        elif t[2] == "/":
+            t[0] = t[1] / t[3]
+        elif t[2] == "%":
+            t[0] = t[1] % t[3]
+        elif t[2] == "^":
+            t[0] = t[1] ** t[3]
+        elif t[2] == "//":
+            t[0] = t[1] // t[3]
+    except TypeError:
+        print("Error: Invalid calculation")
+        t[0] = 0
 
 
 # "include" =  'HASH' 'INCLUDE' 'LTHAN' 'STRINGVAR' 'GTHAN'
 def p_include(t):
     "include : HASH INCLUDE LTHAN VARNAME GTHAN"
-    # print(t[3])
+    # importing lbraries in our version of c++ doenst have useful effect
+    # when running from python
+    pass
 
 
 # "type" = 'INT' | 'FLOAT' | 'CHAR' | 'STRING' | 'BOOL'
@@ -546,26 +546,42 @@ def p_type(t):
     | CHAR
     | STRING
     | BOOL"""
-    # t[0] = t[1]
+    # explicit types are not used in python
+    pass
 
 
 # "cin_in" = 'CIN' 'RBIT' 'VARNAME' 'SEMICOLON'
 def p_cin_in(t):
     "cin_in : CIN RBIT VARNAME SEMICOLON"
-    # print(t[3])
+    input_val = input()
+    # check if input is previously declared variable
+    if input_val in names.keys():
+        names[t[3]] = names[input_val]
+    # check if input is a number
+    elif input_val.isdigit():
+        names[t[3]] = input_val
+    # check if input is a string
+    elif input_val[0] in ["'", '"'] and input_val[-1] in ["'", '"']:
+        names[t[3]] = input_val
+    # return error
+    else:
+        print("Error: Invalid input - variable not declared")
+        return
 
 
 # "number" = 'INTVAR' | 'FLOATVAR'
 def p_number(t):
     """number : INTVAR
     | FLOATVAR"""
-    # t[0] = t[1]
+    t[0] = t[1]
 
 
 # "return_type" = "type" | 'VOID'
 def p_return_type(t):
     """return_type : type
     | VOID"""
+    # python doesnt need to use return types
+    pass
     # t[0] = t[1]
 
 
@@ -576,17 +592,18 @@ def p_math_operator(t):
     | MUL
     | DIV
     | MOD"""
-    # t[0] = t[1]
+    t[0] = t[1]
 
 
 # "comparator" = 'GTHAN' | 'LTHAN' | 'DEQUAL' | 'GREATER_EQUAL' | 'LESS_EQUAL' | 'NOT_EQUAL'
 def p_comparator(t):
-    """comparator : LTHAN
+    """comparator : GTHAN
+    | LTHAN
     | LESS_EQUAL
     | DEQUAL
     | GREATER_EQUAL
     | NOT_EQUAL"""
-    # t[0] = t[1]
+    t[0] = t[1]
 
 
 # "var_value" = 'INTVAR' | 'FLOATVAR' | 'STRINGVAR' | 'CHARVAR' | 'BOOLVAR'
@@ -595,108 +612,37 @@ def p_var_value(t):
     | FLOATVAR
     | STRINGVAR
     | bool_value"""
-    # t[0] = t[1]
+    t[0] = t[1]
+    # -----------------------------------------------------------------------------------------
+    # test if variables are saved properly
+    for k, v in names.items():
+        print("key: " + str(k) + " value: " + str(v))
+
+
+# -----------------------------------------------------------------------------------------
 
 
 # "bool_value" = 'TRUE' | 'FALSE'
 def p_bool_value(t):
     """bool_value : TRUE
     | FALSE"""
-    # t[0] = True
-    # print(t[0])
+    t[0] = t[1]
 
 
 # ------------------------------------------------------------------------
 import ply.yacc as yacc
 import ply.lex as lex
 
-parser = yacc.yacc()
 
-# while True:
-#     try:
-#         s = input("calc > ")  # Use raw_input on Python 2
-#     except EOFError:
-#         break
-#     parser.parse(s)
+parser = yacc.yacc()
 
 lex.lex()
 
-# test_input = """x = 3 * 4 + 5 * 6"""
-test_input = """
-#include<iostream>
 
-using namespace std;
+with open("cpp_code.txt", "r") as file:
+    test_input = file.read().rstrip()
+print(test_input)
 
-void mode(){
-    int a = 3;
-}
-
-class Car{
-    int year;
-    private:
-        int speed;
-        int gear;
-    public:
-        string name;
-    protected:
-        bool c;
-};
-
-
-
-int main()
-{
-    char str;
-    string hi;
-    int a;
-    char b;
-    int a = 34;
-    a = 13;
-    
-    bool isActive = true;
-
-
-    for(;;){ 
-        return 5; 
-    } 
-
-    for(int i=0; i<5; i+=1){
-        return 5;
-    }
-
-    if(x==5){
-        a = 3;
-    } else {
-        return 5;
-    }
-
-    while(a<5){
-        cout << a;
-    }
-    
-    cout<<"Enter Your Name " << endl << "Hey";
-
-    cout<<"Hello "<<str<<"This is sample code, 152.32";
-    
-    return 0;
-};
-
-"""
-# test_input = """
-# using namespace std;
-
-# int main()
-# {
-#     char str;
-#     string hi;
-#     cout<<"Enter Your Name "<<\n;
-#     cin>>str;
-#     cout<<"Hello "<<str<<"This is sample code, 152.32";
-#     cout<<endl;
-#     return 0;
-
-# }
-# """
 
 lex.input(test_input)
 
