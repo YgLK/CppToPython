@@ -6,12 +6,12 @@ tokens = [
     # \  )  (   [     ]    {   } 
     'ESC', 'RPARENTH', 'LPARENTH', 'LSQUARE', 'RSQUARE', 'LBRACE', 'RBRACE',
     #  :   ;   ,   "   '   . 
-    'COLON', 'SEMICOLON', 'COMMA', 
+    'COLON', 'SEMICOLON', 'COMMA',
     # 'QUOTE',  'APOSTROPHE', 
     'DOT',
 
     # > < ! =  == >= <= != << >>
-    'GTHAN', 'LTHAN', 
+    'GTHAN', 'LTHAN',
     # 'NOT', 
     'EQUAL', 'DEQUAL', 'GREATER_EQUAL', 'LESS_EQUAL', 'NOT_EQUAL',
 
@@ -242,13 +242,21 @@ def p_error(t):
 
 
 # ------------------------------------------------------------------------
+s = str
+tab = "    "
+
 
 # S' -> "program"
 # "program" = {"include"} "using_namespace_std" "block"
 def p_program(t):
     """program : include using_namespace_std block
     | using_namespace_std block"""
-    # print(t[3])
+    print(t[:])
+    if len(t) == 4:
+        t[0] = 3
+    if len(t) == 3:
+        t[0] = t[2]
+
 
 
 # "block" = {"variable_def" | "class" | "function"} "main_func"
@@ -256,7 +264,10 @@ def p_program(t):
 def p_block(t):
     """block : block_part block_part main_func
     | main_func"""
-    # pass
+    if len(t) == 4:
+        t[0] = t[1:4]
+    if len(t) == 2:
+        t[0] = t[1]
 
 
 def p_block_part(t):
@@ -264,13 +275,16 @@ def p_block_part(t):
     | class
     | function
     | block_part block_part"""
-    # pass
+    if len(t) == 2:
+        t[0] = [t[1]]
+    if len(t) == 3:
+        t[0] = [t[1], t[2]]
 
 
 # using_namespace_std = 'USING' 'NAMESPACE' 'STD' 'SEMICOLON'
 def p_using_namespace_std(t):
     """using_namespace_std : USING NAMESPACE STD SEMICOLON"""
-    # pass
+    pass
 
 
 # "main_func" = ('VOID' | 'INT') 'MAIN' 'LPARENTH' 'RPARENTH' 'LBRACE' "func_block" 'RBRACE' 'SEMICOLON'
@@ -278,7 +292,10 @@ def p_main_func(t):
     """main_func : VOID MAIN LPARENTH RPARENTH LBRACE func_block RBRACE SEMICOLON
     | INT MAIN LPARENTH RPARENTH LBRACE func_block RBRACE SEMICOLON
     | INT MAIN LPARENTH RPARENTH LBRACE RBRACE SEMICOLON"""
-    # pass
+    if len(t) == 9:
+        t[0] = ["if __name__ == '__main__':", t[6]]
+    if len(t) == 8:
+        print("Main function in Python cannot be empty.")
 
 
 # "parameters" = "type" 'VARNAME' {'COMMA' "type" 'VARNAME'}
@@ -341,14 +358,12 @@ def p_condition(t):
 # "while_statement" = 'WHILE' 'LPARENTH' "condition" 'RPARENTH' 'LBRACE' "func_block" 'RBRACE'
 def p_while_statement(t):
     "while_statement : WHILE LPARENTH condition RPARENTH LBRACE func_block RBRACE"
-    # pass
 
 
 # "for_statement" = 'FOR' 'LPARENTH' 'INT' VARNAME EQUAL 'INTVAR' 'SEMICOLON' VARNAME "comparator" 'INTVAR' SEMICOLON VARNAME ('DPLUS' | 'DMINUS' | "math_operator" EQUAL 'INTVAR') 'LBRACE' "func_block" 'RBRACE' 'SEMICOLON'
 def p_for_statement(t):
     """for_statement : FOR LPARENTH INT VARNAME EQUAL INTVAR SEMICOLON VARNAME comparator INTVAR SEMICOLON VARNAME math_operator EQUAL INTVAR RPARENTH LBRACE func_block RBRACE
     | FOR LPARENTH SEMICOLON SEMICOLON RPARENTH LBRACE func_block RBRACE"""
-    # pass
 
 
 # "class" ='CLASS' 'VARNAME' "LBRACE" {"class_variables" | "class_functions"} "RBRACE" 'SEMICOLON'
@@ -356,7 +371,6 @@ def p_class(t):
     """class : CLASS VARNAME LBRACE class_variable class_functions RBRACE SEMICOLON
     | CLASS VARNAME LBRACE class_functions RBRACE SEMICOLON
     | CLASS VARNAME LBRACE class_variable RBRACE SEMICOLON"""
-    # pass
 
 
 # "return_statement" = 'RETURN' ("var_value" |  'VARNAME') SEMICOLON
@@ -373,11 +387,11 @@ def p_assign_var(t):
     names[t[1]] = t[3]
 
 
+
 # "variable_def" = "declare_var" | "declare_assign_var"
 def p_variable_def(t):
     """variable_def : declare_var
     | declare_assign_var"""
-    # pass
 
 
 # "declare_assign_var" = "type" 'VARNAME' EQUAL "var_value" SEMICOLON
@@ -385,6 +399,7 @@ def p_declare_assign_var(t):
     """declare_assign_var : type VARNAME EQUAL var_value SEMICOLON
     | type VARNAME EQUAL calculation SEMICOLON"""
     names[t[2]] = t[4]
+    t[0] = t[2:5]
 
 
 # "declare_var" = "type" 'VARNAME' SEMICOLON
@@ -392,6 +407,7 @@ def p_declare_var(t):
     """declare_var : type VARNAME SEMICOLON"""
     # create default value of variable as 0
     names[t[2]] = 0
+    t[0] = t[2:4]
 
 
 # "class_variables" = ["access_modifier"] 'SEMICOLON'  {"variable_def"}
@@ -432,7 +448,7 @@ def p_func_block(t):
     """func_block : statement
     | statement return_statement
     | return_statement"""
-    # pass
+    return t
 
 
 # "statement" = "variable_def" | "if_statement" | "while_statement" | "for_statement | "print_out" | "cin_in" | "variable_def" | 'VARNAME' EQUAL "calculation" 'SEMICOLON'
@@ -446,13 +462,17 @@ def p_statement(t):
     | VARNAME EQUAL calculation SEMICOLON
     | assign_var
     | statement statement"""
-    # pass
-
+    if len(t) == 2:
+        t[0] = t[1]
+    if len(t) == 5:
+        t[0] = [t[1:]]
+    if len(t) == 3:
+        t[0] = t[1:]
 
 # "print_out" = 'COUT' "cout_expression_string" 'SEMICOLON'
 def p_print_out(t):
     """print_out : COUT cout_expression_string SEMICOLON"""
-    print(t[2])
+    t[0] = ["print(", t[2], ")"]
 
 
 # "cout_expression_string" = 'cout_expression' "cout_expression_string" | 'cout_expression'
@@ -536,7 +556,6 @@ def p_include(t):
     "include : HASH INCLUDE LTHAN VARNAME GTHAN"
     # importing lbraries in our version of c++ doenst have useful effect
     # when running from python
-    pass
 
 
 # "type" = 'INT' | 'FLOAT' | 'CHAR' | 'STRING' | 'BOOL'
@@ -615,8 +634,8 @@ def p_var_value(t):
     t[0] = t[1]
     # -----------------------------------------------------------------------------------------
     # test if variables are saved properly
-    for k, v in names.items():
-        print("key: " + str(k) + " value: " + str(v))
+    # for k, v in names.items():
+    #     print("key: " + str(k) + " value: " + str(v))
 
 
 # -----------------------------------------------------------------------------------------
@@ -633,16 +652,13 @@ def p_bool_value(t):
 import ply.yacc as yacc
 import ply.lex as lex
 
-
 parser = yacc.yacc()
 
 lex.lex()
 
-
 with open("cpp_code.txt", "r") as file:
     test_input = file.read().rstrip()
 print(test_input)
-
 
 lex.input(test_input)
 
@@ -652,4 +668,5 @@ while True:
     if not tok:
         break
 
-parser.parse(test_input)
+ac = parser.parse(test_input)
+print("Results:", ac)
