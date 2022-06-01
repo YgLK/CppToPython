@@ -1,4 +1,6 @@
-# TOKENS
+# ----------------------------------------
+#       TOKENS
+# ----------------------------------------
 TOK_INT = "TOK_INT"
 # separate letter
 TOK_CHAR = "TOK_CHAR"
@@ -36,7 +38,10 @@ TOK_RBRACE = "TOK_RBRACE"
 # ;
 TOK_SEMICOLON = "TOK_SEMICOLON"
 
-# ------- KEYWORDS -------
+
+# -------------
+# KEYWORDS
+# -------------
 # while
 TOK_WHILE = "TOK_WHILE"
 # for
@@ -78,7 +83,9 @@ TOK_PROTECTED = "TOK_PROTECTED"
 # public
 TOK_PUBLIC = "TOK_PUBLIC"
 
+# -------------
 # DATA TYPES
+# -------------
 # int
 TOK_INTEGER = "TOK_INTEGER"
 # double
@@ -91,26 +98,27 @@ TOK_STRING = "TOK_STRING"
 TOK_CHARACTER = "TOK_CHARACTER"
 # long
 TOK_LONG = "TOK_LONG"
-# html code
-html_string = """<!DOCTYPE html>
-<link rel="stylesheet" href="style.css">
-<html>
-<head>
-<title>Cpp code with syntax highlighting</title>
-</head>
-<body><p>"""
 
-html_string_end = """
-</p>
-</body>
-</html>"""
+# WHITESPACES
+TOK_SPACE = "TOK_SPACE"
+TOK_BREAKLINE = "TOK_BREAKLINE"
+TOK_TAB = "TOK_TAB"
 
 
-# TODO:
-# - przesunięcia są niepoprawnie przez co niektóre tokeny są omijane
-# - ++ -- << >> etc. recognition
-# - html colouring (idk czy trzeba - jak będą tokeny to już w sumie dużo roboty nie ma tbh)
-# - omit characters between two quotes as it can be custom string etc. a = "124s asdac czx e124135"
+# ----------------------------------------
+#       TOKEN COLORS
+# ----------------------------------------
+# colouring style for each token type
+GREEN_COL = [TOK_COUT, TOK_CIN]
+DBLUE_COL = [TOK_INTEGER, TOK_CHARACTER, TOK_DOUBLE, TOK_FLOAT, TOK_LONG]
+YELLOW_COL = [TOK_MAIN]
+# L means light
+LBLUE_COL = [TOK_STRING]
+LGREEN_COL = [TOK_INT, TOK_CHAR]
+PINK_COL = [TOK_RETURN, TOK_QUOTE]
+ORANGE_COL = [TOK_LBRACE, TOK_RBRACE, TOK_RSQUARE, TOK_LSQUARE, TOK_LPARENTH, TOK_RPARENTH, TOK_ESC]
+LEMON_COL = [TOK_PLUS, TOK_MINUS, TOK_DIV, TOK_MUL, TOK_GTHAN, TOK_LTHAN]
+VIOLET_COL = [TOK_SEMICOLON]
 
 
 class Token:
@@ -122,59 +130,33 @@ class Token:
         return "({0}: {1})".format(self.code, self.value)
 
 
-def color(token: Token):
-    global html_string
-    if token.code in (TOK_INTEGER, TOK_DOUBLE, TOK_FLOAT, TOK_STRING, TOK_CHARACTER, TOK_LONG,
-                      TOK_WHILE, TOK_FOR, TOK_IF, TOK_ELSE, TOK_MAIN, TOK_USING, TOK_NAMESPACE, TOK_RETURN,
-                      TOK_BREAK, TOK_CLASS, TOK_CONTINUE, TOK_DELETE, TOK_VOID, TOK_PRIVATE, TOK_PROTECTED, TOK_PUBLIC):
-        html_string = html_string + "<span class=orange>" + str(token.value) + "</span>"
-
-    elif token.code in (TOK_QUOTE, TOK_VAR):
-        html_string = html_string + "<span class=bottle_green>" + str(token.value) + "</span>"
-    else:
-        html_string = html_string + str(token.value)
-
-
 def scanner(filepath):
-    global html_string
     # open .txt file
     with open(filepath) as file:
-        lines = file.read().rstrip()
-    # list containing tokens
+        lines = file.read()
+    # init list containing tokens
     tokens_list = []
     # current position
     curr_pos = 0
     # current read character
     curr_char = ""
     while True:
-        # move further
-        # curr_pos += 1
-
-        # assign None to current character when EOF is met
+        # if no characters left
         if len(lines) == curr_pos:
             tokens_list.append(Token(TOK_EOF, "EOF"))
             return tokens_list
         else:
             curr_char = lines[curr_pos]
-        # omit whitespaces
-
-        if curr_char == " ":
+        # whitespaces
+        if curr_char in " \t\n":
+            if curr_char == " ":
+                tokens_list.append(Token(TOK_SPACE, curr_char))
+            elif curr_char == "\t":
+                tokens_list.append(Token(TOK_TAB, curr_char))
+            elif curr_char == "\n":
+                tokens_list.append(Token(TOK_BREAKLINE, curr_char))
             curr_pos += 1
-            html_string += " "
             continue
-        if curr_char == "\t":
-            curr_pos += 1
-            html_string += "\t"
-            continue
-        if curr_char == "\n":
-            curr_pos += 1
-            html_string += "<br>"
-            continue
-
-        # if curr_char in " \t\n":
-        #     curr_pos += 1
-        #     continue
-
         # create instance of the appropriate token
         if curr_char in "0123456789":
             # check if number has more than 1 digit
@@ -185,10 +167,8 @@ def scanner(filepath):
                 if len(lines) == curr_pos:
                     # add number token
                     tokens_list.append(Token(TOK_INT, number))
-                    color(tokens_list[-1])
                     # add end of file token
                     tokens_list.append(Token(TOK_EOF, "EOF"))
-                    color(tokens_list[-1])
                     return tokens_list
                 elif lines[curr_pos] in "0123456789":
                     number += lines[curr_pos]
@@ -197,13 +177,12 @@ def scanner(filepath):
                 elif lines[curr_pos].lower() in "abcdefghijklmnopqrstuvwxyz":
                     # letters cannot occur after digits
                     tokens_list.append(
-                        "ERROR", f"Invalid token at the position: {curr_pos}"
+                       ("ERROR", f"Invalid token at the position: {curr_pos}")
                     )
                     return
                 # set current position to the position of last read number
                 else:
                     tokens_list.append(Token(TOK_INT, number))
-                    color(tokens_list[-1])
                     break
         # read token starting with
         elif (
@@ -213,10 +192,10 @@ def scanner(filepath):
             characters = curr_char
             curr_pos += 1
             while True:
+                # if no characters left
                 if len(lines) == curr_pos:
                     # add character token
                     tokens_list.append(Token(TOK_CHAR, characters))
-                    color(tokens_list[-1])
                     # add end of file token
                     tokens_list.append(Token(TOK_EOF, "EOF"))
                     return tokens_list
@@ -227,27 +206,22 @@ def scanner(filepath):
                     characters += lines[curr_pos]
                     # move the cursor
                     curr_pos += 1
-                # set current position to the position of last read number
+                # if whitespace is the next character
                 else:
                     token = keyword_detect(characters)
                     tokens_list.append(Token(token, characters))
-                    color(tokens_list[-1])
                     break
         elif curr_char == '"':
             tokens_list.append(Token(TOK_QUOTE, curr_char))
-            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == ";":
             tokens_list.append(Token(TOK_SEMICOLON, curr_char))
-            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == "{":
             tokens_list.append(Token(TOK_LBRACE, curr_char))
-            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == "}":
             tokens_list.append(Token(TOK_RBRACE, curr_char))
-            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == "[":
             tokens_list.append(Token(TOK_LSQUARE, curr_char))
@@ -278,15 +252,12 @@ def scanner(filepath):
             curr_pos += 1
         elif curr_char == "(":
             tokens_list.append(Token(TOK_LPARENTH, curr_char))
-            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == ")":
             tokens_list.append(Token(TOK_RPARENTH, curr_char))
-            color(tokens_list[-1])
             curr_pos += 1
         elif curr_char == "\\":
             tokens_list.append(Token(TOK_RPARENTH, curr_char))
-            color(tokens_list[-1])
             curr_pos += 1
         else:
             raise ValueError(
@@ -294,7 +265,7 @@ def scanner(filepath):
                 + '"'
                 + str(curr_char)
                 + '"'
-                + " at the index "
+                + " - position "
                 + str(curr_pos)
             )
 
@@ -340,7 +311,7 @@ def keyword_detect(word):
         return TOK_INTEGER
     elif word == "char":
         return TOK_CHARACTER
-    elif word == "str":
+    elif word == "string":
         return TOK_STRING
     elif word == "long":
         return TOK_LONG
@@ -351,12 +322,65 @@ def keyword_detect(word):
         return TOK_VAR
 
 
+def generateHTML(filename, tokens):
+    with open(filename, 'w') as f:
+        # set html style
+        f.write("""
+        <!DOCTYPE html><html>
+        <link href='https://fonts.googleapis.com/css?family=JetBrains Mono' rel='stylesheet'>
+        <style>
+            body {
+                font-family: 'JetBrains Mono';
+                font-size: 30px;
+                color: white;
+            }
+        </style>
+        <body style="background-color:#2b2b2b;">
+        """)
+        # perform file operations
+        for token in tokens:
+            # generate coloring for the token
+            tokenHTML = apply_token_colour(token)
+            # f.write(tokenHTML + "\n")
+            f.write(tokenHTML)
+        f.write("</body></html>")
+
+
+def apply_token_colour(token):
+    # default is white
+    color = 'white'
+    if token.code in GREEN_COL:
+        color = "#82E0AA"
+    elif token.code in DBLUE_COL:
+        color = "#3498DB"
+    elif token.code in YELLOW_COL:
+        color = "#F7DC6F"
+    # light blue color
+    elif token.code in LBLUE_COL:
+        color = "#AED6F1"
+    elif token.code in LGREEN_COL:
+        color = "#A9DFBF"
+    elif token.code in PINK_COL:
+        color = "#DE3163"
+    elif token.code in ORANGE_COL:
+        color = "#E67E22"
+    elif token.code in LEMON_COL:
+        color = "#DFFF00"
+    elif token.code in VIOLET_COL:
+        color = "#8d42f5"
+    elif token.code == TOK_BREAKLINE:
+        return "<br>"
+    token_str = f"""<span style="color:{color};">""" + \
+                token.value + \
+                """</span>"""
+    return token_str
+
+
 if __name__ == "__main__":
     filepath = "data/cpp_code.txt"
     tokens = scanner(filepath)
+    # print all tokens
     for token in tokens:
         print(token)
-
-    with open("data/cpp_code.html", 'w') as f:
-        f.write(html_string + html_string_end)
-        f.close()
+    # generate html from source file
+    generateHTML(r"E:\python_projects\compilation_theory\scanner\result.html", tokens=tokens)
