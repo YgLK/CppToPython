@@ -251,12 +251,11 @@ tab = "    "
 def p_program(t):
     """program : include using_namespace_std block
     | using_namespace_std block"""
-    print(t[:])
+
     if len(t) == 4:
-        t[0] = 3
+        t[0] = t[3]
     if len(t) == 3:
         t[0] = t[2]
-
 
 
 # "block" = {"variable_def" | "class" | "function"} "main_func"
@@ -275,10 +274,11 @@ def p_block_part(t):
     | class
     | function
     | block_part block_part"""
-    if len(t) == 2:
-        t[0] = [t[1]]
-    if len(t) == 3:
-        t[0] = [t[1], t[2]]
+    # if len(t) == 2:
+    #     t[0] = [t[1]]
+    # if len(t) == 3:
+    #     t[0] = [t[1], t[2]]
+    t[0] = t[1:]
 
 
 # using_namespace_std = 'USING' 'NAMESPACE' 'STD' 'SEMICOLON'
@@ -327,8 +327,7 @@ def p_if_statement(t):
 # "else_block" = 'ELSE' 'LBRACE' "func_block" 'RBRACE'
 def p_else_block(t):
     """else_block : ELSE LBRACE func_block RBRACE"""
-    # pass
-    t[0] = t[3]
+    t[0] = ["else:", t[3]]
 
 
 # "condition" = ('VARNAME' | "var_value") "comparator" ('VARNAME' | "var_value")
@@ -358,12 +357,18 @@ def p_condition(t):
 # "while_statement" = 'WHILE' 'LPARENTH' "condition" 'RPARENTH' 'LBRACE' "func_block" 'RBRACE'
 def p_while_statement(t):
     "while_statement : WHILE LPARENTH condition RPARENTH LBRACE func_block RBRACE"
+    t[0] = ["while", t[3], ":", t[6]]
 
 
 # "for_statement" = 'FOR' 'LPARENTH' 'INT' VARNAME EQUAL 'INTVAR' 'SEMICOLON' VARNAME "comparator" 'INTVAR' SEMICOLON VARNAME ('DPLUS' | 'DMINUS' | "math_operator" EQUAL 'INTVAR') 'LBRACE' "func_block" 'RBRACE' 'SEMICOLON'
 def p_for_statement(t):
     """for_statement : FOR LPARENTH INT VARNAME EQUAL INTVAR SEMICOLON VARNAME comparator INTVAR SEMICOLON VARNAME math_operator EQUAL INTVAR RPARENTH LBRACE func_block RBRACE
     | FOR LPARENTH SEMICOLON SEMICOLON RPARENTH LBRACE func_block RBRACE"""
+
+    if len(t) == 9:
+        t[0] = ["while True:", t[7]]
+    else:
+        t[0] = ["for", t[4], "in range(", t[6], t[10], t[15], "):", t[18]]
 
 
 # "class" ='CLASS' 'VARNAME' "LBRACE" {"class_variables" | "class_functions"} "RBRACE" 'SEMICOLON'
@@ -372,12 +377,19 @@ def p_class(t):
     | CLASS VARNAME LBRACE class_functions RBRACE SEMICOLON
     | CLASS VARNAME LBRACE class_variable RBRACE SEMICOLON"""
 
+    if len(t) == 8:
+        t[0] = ["class: ", t[2], ":", t[4], t[5]]
+    if len(t) == 7:
+        t[0] = ["class: ", t[2], ":", t[4]]
+
 
 # "return_statement" = 'RETURN' ("var_value" |  'VARNAME') SEMICOLON
 def p_return_satement(t):
     """return_statement : RETURN var_value SEMICOLON
     | RETURN SEMICOLON"""
-    t[0] = t[2]
+    t[0] = ["return"]
+    if len(t) == 4:
+        t[0].append(t[2])
 
 
 # "assign_var" = 'VARNAME' EQUAL "var_value" SEMICOLON
@@ -385,13 +397,14 @@ def p_assign_var(t):
     """assign_var : VARNAME EQUAL var_value SEMICOLON
     | VARNAME EQUAL calculation SEMICOLON"""
     names[t[1]] = t[3]
-
+    t[0] = t[1:]
 
 
 # "variable_def" = "declare_var" | "declare_assign_var"
 def p_variable_def(t):
     """variable_def : declare_var
     | declare_assign_var"""
+    t[0] = t[1]
 
 
 # "declare_assign_var" = "type" 'VARNAME' EQUAL "var_value" SEMICOLON
@@ -407,7 +420,7 @@ def p_declare_var(t):
     """declare_var : type VARNAME SEMICOLON"""
     # create default value of variable as 0
     names[t[2]] = 0
-    t[0] = t[2:4]
+    t[0] = t[2]
 
 
 # "class_variables" = ["access_modifier"] 'SEMICOLON'  {"variable_def"}
@@ -416,7 +429,7 @@ def p_class_variable(t):
     | variable_def
     | assign_var
     | class_variable class_variable"""
-    # pass
+    t[0] = t[1:]
 
 
 # "class_functions" = ["access_modifier"] {"function"} 'SEMICOLON'
@@ -424,14 +437,18 @@ def p_class_functions(t):
     """class_functions : access_modifier COLON function
     | function
     | class_functions class_functions"""
-    # pass
+    t[0] = t[1:]
 
 
 # "function" = "return_type" 'VARNAME' 'LPARENTH' ["parameters"] 'RPARENTH' 'LBRACE' "func_block" 'RBRACE' 'SEMICOLON'
 def p_function(t):
     """function : return_type VARNAME LPARENTH parameters RPARENTH LBRACE func_block RBRACE
     | return_type VARNAME LPARENTH RPARENTH LBRACE func_block RBRACE"""
-    # pass
+
+    if len(t) == 9:
+        t[0] = ["def ", t[2], "(", t[4], "):", t[7]]
+    else:
+        t[0] = ["def ", t[2], "():", t[6]]
 
 
 # "access_modifier" = 'PUBLIC' | 'PRIVATE' | 'PROTECTED'
@@ -439,7 +456,7 @@ def p_access_modifier(t):
     """access_modifier : PUBLIC
     | PRIVATE
     | PROTECTED"""
-    # pass
+    t[0] = t[1]
 
 
 # "func_block" = ({"variable_def" | "if_statement" | "while_statement" | "for_statement | "print_out" | "cin_in" | "variable_def" | 'VARNAME' EQUAL "calculation" 'SEMICOLON' } | "return_statement")
@@ -448,7 +465,10 @@ def p_func_block(t):
     """func_block : statement
     | statement return_statement
     | return_statement"""
-    return t
+    if len(t) == 2:
+        t[0] = t[1]
+    if len(t) == 3:
+        t[0] = t[1:]
 
 
 # "statement" = "variable_def" | "if_statement" | "while_statement" | "for_statement | "print_out" | "cin_in" | "variable_def" | 'VARNAME' EQUAL "calculation" 'SEMICOLON'
@@ -462,12 +482,14 @@ def p_statement(t):
     | VARNAME EQUAL calculation SEMICOLON
     | assign_var
     | statement statement"""
-    if len(t) == 2:
-        t[0] = t[1]
-    if len(t) == 5:
-        t[0] = [t[1:]]
-    if len(t) == 3:
-        t[0] = t[1:]
+    # if len(t) == 2:
+    #     t[0] = t[1]
+    # if len(t) == 5:
+    #     t[0] = t[1:]
+    # if len(t) == 3:
+    #     t[0] = t[1:]
+    t[0] = t[1:]
+
 
 # "print_out" = 'COUT' "cout_expression_string" 'SEMICOLON'
 def p_print_out(t):
@@ -548,7 +570,7 @@ def p_calculation(t):
             t[0] = t[1] // t[3]
     except TypeError:
         print("Error: Invalid calculation")
-        t[0] = 0
+        t[0] = t[1:]
 
 
 # "include" =  'HASH' 'INCLUDE' 'LTHAN' 'STRINGVAR' 'GTHAN'
@@ -556,6 +578,7 @@ def p_include(t):
     "include : HASH INCLUDE LTHAN VARNAME GTHAN"
     # importing lbraries in our version of c++ doenst have useful effect
     # when running from python
+    pass
 
 
 # "type" = 'INT' | 'FLOAT' | 'CHAR' | 'STRING' | 'BOOL'
@@ -586,6 +609,7 @@ def p_cin_in(t):
     else:
         print("Error: Invalid input - variable not declared")
         return
+    t[0] = t[3], "=input()"
 
 
 # "number" = 'INTVAR' | 'FLOATVAR'
@@ -601,7 +625,6 @@ def p_return_type(t):
     | VOID"""
     # python doesnt need to use return types
     pass
-    # t[0] = t[1]
 
 
 # "math_operator" = 'PLUS' | 'MINUS' | 'MUL' | 'DIV'
@@ -668,5 +691,29 @@ while True:
     if not tok:
         break
 
+
+def traverse(o, tree_types=(list, list)):
+    if isinstance(o, tree_types):
+        for value in o:
+            for subvalue in traverse(value, tree_types):
+                yield subvalue
+    else:
+        yield o
+
+
+def fn(items, level=0):
+    for item in items:
+        if isinstance(item, list):
+            fn(item, level + 1)
+        else:
+            indentation = '\t' * level
+            print('%s%s' % (indentation, item))
+
+
 ac = parser.parse(test_input)
-print("Results:", ac)
+
+print(list(traverse(ac)))
+from pprint import pprint
+fn(ac)
+pprint(ac)
+

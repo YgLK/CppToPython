@@ -39,6 +39,7 @@ int main()
         cout<<a;
     }
     int x = 4;
+    cin>>x;
 
     
     if(x!=5){
