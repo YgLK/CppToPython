@@ -692,7 +692,6 @@ while True:
         break
 
 
-
 def fn(items, level=0):
     for item in items:
         if isinstance(item, list):
@@ -705,6 +704,6 @@ def fn(items, level=0):
 ac = parser.parse(test_input)
 
 from pprint import pprint
-fn(ac)
-pprint(ac)
 
+# fn(ac)
+pprint(ac)
