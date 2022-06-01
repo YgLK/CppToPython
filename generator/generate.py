@@ -692,14 +692,6 @@ while True:
         break
 
 
-def traverse(o, tree_types=(list, list)):
-    if isinstance(o, tree_types):
-        for value in o:
-            for subvalue in traverse(value, tree_types):
-                yield subvalue
-    else:
-        yield o
-
 
 def fn(items, level=0):
     for item in items:
@@ -712,7 +704,6 @@ def fn(items, level=0):
 
 ac = parser.parse(test_input)
 
-print(list(traverse(ac)))
 from pprint import pprint
 fn(ac)
 pprint(ac)
