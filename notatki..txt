@@ -1,0 +1,28 @@
+for(int i=0; i<5; i+=1){        <-- jest syntax error przy '('
+    cout >> b;          # UPDATE: działa, brakowało w restricted keywords for'a
+};
+
+int funkcja(){                  <-- tak jak wyżej, ten sam error
+    int a = 5;
+    int b = 3;
+    return a;
+}
+
+
+
+
+void nazwa(){   <- void przechodzi
+    int a = 5;
+    int b = 3;
+    return a;
+}
+
+
+string nazwa(){   <- wywala błąd
+    int a = 5;
+    int b = 3;
+    return a;
+}
+
+jeśli jest przed main'em coś więcej niż 
+jedna klasa albo funkcja to wywala błąd też

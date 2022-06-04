@@ -246,6 +246,21 @@ s = str
 tab = "    "
 
 
+class ClassToken:
+    def __init__(self, name):
+        self.class_name = name
+        self.class_fields = {}
+        self.class_methods = {}
+
+    def __str__(self):
+        return f"""Class {self.class_name}:\n
+            (Class fields: {self.class_fields},\n 
+            Class methods: {self.class_methods})"""
+
+    def __repr__(self):
+        return self.__str__()
+
+
 # S' -> "program"
 # "program" = {"include"} "using_namespace_std" "block"
 def p_program(t):
@@ -256,7 +271,6 @@ def p_program(t):
         t[0] = 3
     if len(t) == 3:
         t[0] = t[2]
-
 
 
 # "block" = {"variable_def" | "class" | "function"} "main_func"
@@ -387,7 +401,6 @@ def p_assign_var(t):
     names[t[1]] = t[3]
 
 
-
 # "variable_def" = "declare_var" | "declare_assign_var"
 def p_variable_def(t):
     """variable_def : declare_var
@@ -468,6 +481,7 @@ def p_statement(t):
         t[0] = [t[1:]]
     if len(t) == 3:
         t[0] = t[1:]
+
 
 # "print_out" = 'COUT' "cout_expression_string" 'SEMICOLON'
 def p_print_out(t):
@@ -670,3 +684,6 @@ while True:
 
 ac = parser.parse(test_input)
 print("Results:", ac)
+print("Names:")
+for k, v in names.items():
+    print("key: " + str(k) + " value: " + str(v))
