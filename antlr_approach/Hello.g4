@@ -9,8 +9,8 @@ block : block_part main_func
 
 block_part : variable_def
     | function
-    | block_part block_part
-    | class;
+    | class
+    | block_part block_part;
 
 main_func : return_type MAIN LPARENTH RPARENTH LBRACE func_block RBRACE SEMICOLON
     | return_type MAIN LPARENTH RPARENTH LBRACE RBRACE SEMICOLON;
@@ -177,12 +177,12 @@ RBIT: '>>';
 
 INT: 'int';
 FLOAT: 'float';
-CHAR: 'cha';
+CHAR: 'char';
 STRING: 'string';
 BOOL: 'bool';
 VOID: 'void';
 WHILE: 'while';
-FOR: 'fo';
+FOR: 'for';
 IF: 'if';
 ELSE: 'else';
 TRUE: 'true';
