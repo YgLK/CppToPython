@@ -7,10 +7,10 @@ program : include using_namespace_std block
 block : block_part main_func
     | main_func;
 
-block_part : variable_def
+block_part : block_part block_part
+    | variable_def
     | function
-    | class
-    | block_part block_part;
+    | class;
 
 main_func : return_type MAIN LPARENTH RPARENTH LBRACE func_block RBRACE SEMICOLON
     | return_type MAIN LPARENTH RPARENTH LBRACE RBRACE SEMICOLON;
@@ -72,6 +72,7 @@ func_block : statement
     | return_statement;
 
 return_statement : RETURN var_value SEMICOLON
+    | RETURN VARNAME SEMICOLON
     | RETURN SEMICOLON;
 
 
@@ -211,7 +212,7 @@ PROTECTED: 'protected';
 
 
 FLOATVAR: [0-9]*'.'[0-9]+;
-INTVAR: [0-9]+;
+INTVAR: '-'?[0-9]+;
 
 VARNAME: [a-zA-Z_][a-zA-Z0-9_]*;
 
