@@ -1,14 +1,12 @@
 <h1 align="center">  Translator: C++ -> Python
 
 
-  
  
 ## Spis treści
 - [Informacje o projekcie](#doc_scube)
 - [Spis tokenów](#description)
 - [Gramatyka](#instructions)
-- [Messages sent by the server](#servermsg)
-- [Javadoc & SonarQube raport](#doc_scube)
+- [Instrukcja uruchomienia projektu](#servermsg)
 
    
 ## Informacje o projekcie <a name="doc_scube"></a>
@@ -240,21 +238,10 @@ bool_value: TRUE | FALSE;
 ```
 
 
-## Instrukcja uruchomienia projektu <a name="instructions"></a>
-1. Build the project with Maven.
-2. Find target directory in the main module.
-3. Run the problem from your terminal after moving to the target directory in the main
- module by entering this command: <br>
-    `java -jar .\rw-problem-1.0-jar-with-dependencies.jar`
-4. Watch how Readers and Writers according to the given rules change their turns repeatedly
-in the endless loop.
-
-PS. On Win10 sometimes only one thread is running after running the JAR file (wait up to 4 sec). In that case
-you can try to re-run the JAR with the same command (up to 5 tries) or use an IDE (such as Intellij IDEA)
-and run main method in the Main class in the rw-problem module.
-   
-   
-1. Installation: <br>
+## Instrukcja uruchomienia projektu <a name="servermsg"></a>
+	
+	# TODO
+<!-- 1. Installation: <br>
    ANTLR4 install command:<br>
    `pip install antlr4-python3-runtime==4.7.2`<br>
    Warning! Only 4.7.2 version works with this project.
@@ -271,4 +258,4 @@ and run main method in the Main class in the rw-problem module.
    3. CLick 'Test rule program'
    4. Provide input and test if rule works fine.<br>
  or <br>
-Run `main.py`
+Run `main.py` -->
