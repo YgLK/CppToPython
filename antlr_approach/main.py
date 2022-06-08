@@ -64,22 +64,25 @@ from dist.HelloListener import HelloListener
 from dist.HelloLexer import HelloLexer
 from dist.HelloParser import HelloParser
 
+
 class FuncPrinter(HelloListener):
-  def enterFuncdef(self, ctx):
-    print("Oh, a func")
+    def enterFuncdef(self, ctx):
+        print("Oh, a func")
+
 
 def main():
-  contents = 'cpp_code_sample.txt'
-  input = FileStream(contents)
-  lexer = HelloLexer(input)
-  stream = CommonTokenStream(lexer)
-  parser = HelloParser(stream)
-  # tree = parser.funcdef()
-  tree = parser.program()
+    contents = 'cpp_code_sample.txt'
+    input = FileStream(contents)
+    lexer = HelloLexer(input)
+    stream = CommonTokenStream(lexer)
+    parser = HelloParser(stream)
+    # tree = parser.funcdef()
+    tree = parser.program()
 
-  printer = HelloListener()
-  walker = ParseTreeWalker()
-  walker.walk(printer, tree)
+    printer = HelloListener()
+    walker = ParseTreeWalker()
+    walker.walk(printer, tree)
+
 
 if __name__ == '__main__':
-  main()
+    main()

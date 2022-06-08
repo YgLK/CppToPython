@@ -586,7 +586,7 @@ def p_type(t):
 # "cin_in" = 'CIN' 'RBIT' 'VARNAME' 'SEMICOLON'
 def p_cin_in(t):
     "cin_in : CIN RBIT VARNAME SEMICOLON"
-    input_val = input()
+    input_val = "input()"
     # check if input is previously declared variable
     if input_val in names.keys():
         names[t[3]] = names[input_val]
@@ -672,7 +672,7 @@ lex.lex()
 
 with open("cpp_code.txt", "r") as file:
     test_input = file.read().rstrip()
-print(test_input)
+# print(test_input)
 
 lex.input(test_input)
 
