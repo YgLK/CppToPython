@@ -18,9 +18,10 @@ Autorzy: <br>
 Główne cele i założenia projektu: <br>
    * Translacja kodu z C++ do Pythona
    * Możliwość uruchamiania kodu w Pythonie
-   * Język implementacji: Python
-   
-   
+	
+	
+
+Język implementacji: Python <br>
 Generator parserów: ANTLR4
   
 ## Spis tokenów <a name="description"></a>
