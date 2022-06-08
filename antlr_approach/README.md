@@ -6,7 +6,7 @@ Example: https://faun.pub/introduction-to-antlr-python-af8a3c603d23
    ANTLR4 install command:<br>
    `pip install antlr4-python3-runtime==4.7.2`<br>
    Warning! Only 4.7.2 version works with this project.
-2. Build project (IDK if it's necessary at this point):<br>
+2. Build project:<br>
    `antlr4 -Dlanguage=Python3 Hello.g4 -o dist` <br>
    (NOT: `antlr4 -Dlanguage=Python3 Hello.g4 -visitor -o dist`)
 
