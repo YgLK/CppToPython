@@ -1,4 +1,4 @@
-<h1 align="center">  Translator: C++ -> Python
+<h1 align="center">  Kompilator C++ do Pythona
 
 
  
