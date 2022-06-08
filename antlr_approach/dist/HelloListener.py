@@ -73,6 +73,7 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#class_functions.
     def enterClass_functions(self, ctx:HelloParser.Class_functionsContext):
+        print(ctx.getText())
         pass
 
     # Exit a parse tree produced by HelloParser#class_functions.
@@ -82,6 +83,7 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#function.
     def enterFunction(self, ctx:HelloParser.FunctionContext):
+        print(ctx.getText())
         pass
 
     # Exit a parse tree produced by HelloParser#function.
@@ -100,6 +102,7 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#access_modifier.
     def enterAccess_modifier(self, ctx:HelloParser.Access_modifierContext):
+        print(ctx.getText())
         pass
 
     # Exit a parse tree produced by HelloParser#access_modifier.
@@ -307,7 +310,6 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#math_operator.
     def enterMath_operator(self, ctx:HelloParser.Math_operatorContext):
-        print("math_operator")
         pass
 
     # Exit a parse tree produced by HelloParser#math_operator.
@@ -317,7 +319,6 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#comparator.
     def enterComparator(self, ctx:HelloParser.ComparatorContext):
-        print("comparator")
         pass
 
     # Exit a parse tree produced by HelloParser#comparator.
@@ -327,7 +328,7 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#var_value.
     def enterVar_value(self, ctx:HelloParser.Var_valueContext):
-        print("var_value")
+        # print(ctx.getText())
         pass
 
     # Exit a parse tree produced by HelloParser#var_value.
@@ -337,7 +338,7 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#bool_value.
     def enterBool_value(self, ctx:HelloParser.Bool_valueContext):
-        print("bool")
+        print(ctx.getText())
         pass
 
     # Exit a parse tree produced by HelloParser#bool_value.
