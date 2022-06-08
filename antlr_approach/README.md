@@ -12,11 +12,12 @@ Example: https://faun.pub/introduction-to-antlr-python-af8a3c603d23
 
 <br>
 
-1. How to run project in Pycharm:
+1. How to check project grammar in Pycharm:
    1. Go to Hello.g4 file.
    2. Right-click on the 'program' production
    3. CLick 'Test rule program'
-   4. Provide input and test if rule works fine.
-
+   4. Provide input and test if rule works fine.<br>
+ or <br>
+Run `main.py`
 
 Btw. Main file is copied from sample project, so it's not compatible with the project yet.
