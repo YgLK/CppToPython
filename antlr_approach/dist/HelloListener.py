@@ -27,7 +27,7 @@ class HelloListener(ParseTreeListener):
     def exitProgram(self, ctx: HelloParser.ProgramContext):
         print(self.output)
 
-        with open('test.py', 'w') as file:
+        with open('outcome.py', 'w') as file:
             file.write(self.output)
         pass
 
