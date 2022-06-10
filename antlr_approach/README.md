@@ -25,7 +25,7 @@ Język implementacji: Python <br>
 Generator parserów: ANTLR4
   
 ## Spis tokenów <a name="description"></a>
-```
+```java
 WS: [ \t\r\n]+     // znaki białe
 
 PLUS: '+';
@@ -102,7 +102,7 @@ COMMENTVAR: DIV DIV VARNAME '\n';
 ```
 
 ## Gramatyka  <a name="instructions"></a>
-```
+```antlr
 program:
 	include using_namespace_std block
 	| using_namespace_std block;
