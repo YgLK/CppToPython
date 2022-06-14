@@ -1,5 +1,4 @@
 # Generated from Hello.g4 by ANTLR 4.7.2
-import antlr4.error.ErrorListener
 from antlr4 import *
 
 if __name__ is not None and "." in __name__:
@@ -13,6 +12,7 @@ class HelloListener(ParseTreeListener):
     out_path = "out.py"
 
     def __init__(self, out_path="out.py"):
+
         self.out_path = out_path
 
     output = ""
@@ -31,8 +31,7 @@ class HelloListener(ParseTreeListener):
 
     # Exit a parse tree produced by HelloParser#program.
     def exitProgram(self, ctx: HelloParser.ProgramContext):
-        print(self.output)
-
+        # compilation_theory.antlr_approach.main.CppToPython.output_string = self.output
         with open(f'{self.out_path}', 'w') as file:
             file.write(self.output)
         pass
@@ -113,7 +112,6 @@ class HelloListener(ParseTreeListener):
         self.output += f'{self.getIndent()}def '
         if isinstance(ctx.parentCtx, HelloParser.Class_functionsContext):
             if ctx.parentCtx.access_modifier() is not None:
-                print("popopoppo")
                 self.output += f'{self.enterAccess_modifier(ctx.parentCtx.access_modifier())}'
             self.output += f'{ctx.VARNAME()}('
             self.output += "self"

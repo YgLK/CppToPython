@@ -22,6 +22,10 @@ from kivy.graphics import Rectangle
 import kivy.properties
 from kivy.metrics import Metrics
 from kivy.graphics.instructions import Instruction
+from kivy.uix.scrollview import ScrollView
+
+
+from compilation_theory.antlr_approach.main import CppToPython
 
 LabelBase.register(name='JetbrainsMono',
                    fn_regular='fonts/JetBrainsMono[wght].ttf')
@@ -33,7 +37,7 @@ class TabbedWindow(TabbedPanel):
     label_drag_n_drop = Label()
     color = ListProperty([1, 1, 1, 1])
     text_input = TextInput()
-    text_output = TextInput(disabled=True)
+    text_output = TextInput()
 
     def __init__(self, **kwargs):
         super(TabbedWindow, self).__init__(**kwargs)
@@ -67,7 +71,10 @@ class TabbedWindow(TabbedPanel):
 
         bx.add_widget(self.text_input)
 
-        bx.add_widget(self.text_output)
+        sv = ScrollView()
+        sv.do_scroll_y = True
+        sv.add_widget(self.text_output)
+        bx.add_widget(sv)
 
         confirm_button = Button(text="Confirm", size_hint=(1, .1))
         bx.add_widget(confirm_button)
@@ -133,6 +140,8 @@ class TabbedWindow(TabbedPanel):
        str0 = input("Enter Your Name ")
        print("Hello ", str0, "!")
        '''
+        tran = CppToPython()
+        self.text_output.text = tran.from_string(self.text_input.text)
         return
 
     def on_button_press_file(self, arg):

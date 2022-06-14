@@ -62,13 +62,38 @@ from antlr4 import *
 # from Python3Lexer import Python3Lexer
 # from Python3Parser import Python3Parser
 # from Python3Listener import Python3Listener
-from dist.HelloListener import HelloListener
-from dist.HelloLexer import HelloLexer
-from dist.HelloParser import HelloParser
 
-class FuncPrinter(HelloListener):
-    def enterFuncdef(self, ctx):
-        print("Oh, a func")
+from compilation_theory.antlr_approach.dist.HelloListener import HelloListener
+from compilation_theory.antlr_approach.dist.HelloLexer import HelloLexer
+from compilation_theory.antlr_approach.dist.HelloParser import HelloParser
+
+
+def from_file(path, out_path="out.py"):
+    input = FileStream(path)
+    lexer = HelloLexer(input)
+    stream = CommonTokenStream(lexer)
+    parser = HelloParser(stream)
+    tree = parser.program()
+
+    printer = HelloListener(out_path)
+    walker = ParseTreeWalker()
+    walker.walk(printer, tree)
+    return printer.output
+
+
+class CppToPython:
+    output_string = ""
+
+    def from_string(self, input_string: str, out_path="out.py"):
+        lexer = HelloLexer(InputStream(input_string))
+        stream = CommonTokenStream(lexer)
+        parser = HelloParser(stream)
+        tree = parser.program()
+
+        printer = HelloListener(out_path)
+        walker = ParseTreeWalker()
+        walker.walk(printer, tree)
+        return printer.output
 
 
 def from_file(path, out_path="out.py"):
@@ -101,4 +126,5 @@ if __name__ == '__main__':
     if len(sys.argv) == 5 and sys.argv[1] == '-f' and sys.argv[3] == '-d':
         from_file(sys.argv[2], sys.argv[4])
 
-    # from_file("cpp_code_sample.txt", )
+    translator = CppToPython()
+    from_file(path="cpp_code_sample.txt")
