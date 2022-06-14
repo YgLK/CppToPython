@@ -54,8 +54,10 @@
 #         visitor = MyVisitor()
 #         output = visitor.visit(tree)
 #         print(output)
-
+import io
 import sys
+
+import antlr4.tree.Tree
 from antlr4 import *
 # from Python3Lexer import Python3Lexer
 # from Python3Parser import Python3Parser
@@ -64,25 +66,39 @@ from dist.HelloListener import HelloListener
 from dist.HelloLexer import HelloLexer
 from dist.HelloParser import HelloParser
 
-
 class FuncPrinter(HelloListener):
     def enterFuncdef(self, ctx):
         print("Oh, a func")
 
 
-def main():
-    contents = 'cpp_code_sample.txt'
-    input = FileStream(contents)
+def from_file(path, out_path="out.py"):
+    input = FileStream(path)
     lexer = HelloLexer(input)
     stream = CommonTokenStream(lexer)
     parser = HelloParser(stream)
-    # tree = parser.funcdef()
     tree = parser.program()
 
-    printer = HelloListener()
+    printer = HelloListener(out_path=out_path)
+    walker = ParseTreeWalker()
+    walker.walk(printer, tree)
+
+
+def from_string(input_string: str):
+    lexer = HelloLexer(InputStream(input_string))
+    stream = CommonTokenStream(lexer)
+    parser = HelloParser(stream)
+    tree = parser.program()
+
+    printer = HelloListener("a.py")
     walker = ParseTreeWalker()
     walker.walk(printer, tree)
 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) == 3 and sys.argv[1] == '-f':
+        out = sys.argv[2].removesuffix(".txt") + ".py"
+        from_file(sys.argv[2], out)
+    if len(sys.argv) == 5 and sys.argv[1] == '-f' and sys.argv[3] == '-d':
+        from_file(sys.argv[2], sys.argv[4])
+
+    # from_file("cpp_code_sample.txt", )

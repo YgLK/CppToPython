@@ -110,7 +110,7 @@ cout_expression: LBIT printable;
 
 printable: var_value | VARNAME | ENDL | STRINGVAR;
 
-calculation: number math_operator number;
+    calculation: number math_operator number;
 
 include: HASH INCLUDE LTHAN VARNAME GTHAN;
 

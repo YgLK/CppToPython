@@ -1,4 +1,5 @@
 # Generated from Hello.g4 by ANTLR 4.7.2
+import antlr4.error.ErrorListener
 from antlr4 import *
 
 if __name__ is not None and "." in __name__:
@@ -9,6 +10,11 @@ else:
 
 # This class defines a complete listener for a parse tree produced by HelloParser.
 class HelloListener(ParseTreeListener):
+    out_path = "out.py"
+
+    def __init__(self, out_path="out.py"):
+        self.out_path = out_path
+
     output = ""
     indent = 0
     tab = "\t"
@@ -27,7 +33,7 @@ class HelloListener(ParseTreeListener):
     def exitProgram(self, ctx: HelloParser.ProgramContext):
         print(self.output)
 
-        with open('outcome.py', 'w') as file:
+        with open(f'{self.out_path}', 'w') as file:
             file.write(self.output)
         pass
 
@@ -49,7 +55,7 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#main_func.
     def enterMain_func(self, ctx: HelloParser.Main_funcContext):
-        self.output += "if __name__=='__main__':\n"
+        self.output += "if __name__ == '__main__':\n"
         self.indent += 1
 
     # Exit a parse tree produced by HelloParser#main_func.
@@ -77,6 +83,7 @@ class HelloListener(ParseTreeListener):
     def exitClass_object(self, ctx: HelloParser.Class_objectContext):
         self.indent -= 1
         self.addNewLine()
+        self.addNewLine()
         pass
 
     # Enter a parse tree produced by HelloParser#class_variable.
@@ -103,10 +110,15 @@ class HelloListener(ParseTreeListener):
     # Enter a parse tree produced by HelloParser#function.
     def enterFunction(self, ctx: HelloParser.FunctionContext):
 
-        self.output += f'{self.getIndent()}def {ctx.VARNAME()}('
+        self.output += f'{self.getIndent()}def '
         if isinstance(ctx.parentCtx, HelloParser.Class_functionsContext):
+            if ctx.parentCtx.access_modifier() is not None:
+                print("popopoppo")
+                self.output += f'{self.enterAccess_modifier(ctx.parentCtx.access_modifier())}'
+            self.output += f'{ctx.VARNAME()}('
             self.output += "self"
-
+        else:
+            self.output += f'{ctx.VARNAME()}('
         if ctx.parameters() is not None:
             self.output += f'{ctx.parameters()}):'
         else:
@@ -118,6 +130,8 @@ class HelloListener(ParseTreeListener):
     # Exit a parse tree produced by HelloParser#function.
     def exitFunction(self, ctx: HelloParser.FunctionContext):
         self.indent -= 1
+        self.addNewLine()
+        self.addNewLine()
         pass
 
     # Enter a parse tree produced by HelloParser#parameters.
@@ -130,7 +144,12 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#access_modifier.
     def enterAccess_modifier(self, ctx: HelloParser.Access_modifierContext):
-        pass
+        if ctx.PRIVATE() is not None:
+            return "__"
+        if ctx.PUBLIC() is not None:
+            return ""
+        if ctx.PROTECTED() is not None:
+            return "_"
 
     # Exit a parse tree produced by HelloParser#access_modifier.
     def exitAccess_modifier(self, ctx: HelloParser.Access_modifierContext):
@@ -138,7 +157,10 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#statement.
     def enterStatement(self, ctx: HelloParser.StatementContext):
-        pass
+        if ctx.VARNAME() is not None and ctx.EQUAL() is not None and ctx.calculation() is not None:
+            self.output += f'{self.getIndent()}{ctx.VARNAME()} = {self.enterCalculation(ctx.calculation())}'
+            self.addNewLine()
+            pass
 
     # Exit a parse tree produced by HelloParser#statement.
     def exitStatement(self, ctx: HelloParser.StatementContext):
@@ -146,7 +168,7 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#assign_var.
     def enterAssign_var(self, ctx: HelloParser.Assign_varContext):
-        self.output += f'{self.getIndent()}{ctx.VARNAME(0)} =  '
+        self.output += f'{self.getIndent()}{ctx.VARNAME(0)} = '
         if ctx.var_value() is not None:
             self.output += self.enterVar_value(ctx.var_value())
         if ctx.calculation() is not None:
@@ -159,15 +181,20 @@ class HelloListener(ParseTreeListener):
     # Exit a parse tree produced by HelloParser#assign_var.
     def exitAssign_var(self, ctx: HelloParser.Assign_varContext):
         self.addNewLine()
-
         pass
 
-    # Enter a parse tree produced by HelloParser#for_statement.
     def enterFor_statement(self, ctx: HelloParser.For_statementContext):
-        pass
+        self.output += f'{self.getIndent()}{ctx.VARNAME(0)} = {ctx.INTVAR(0)}'
+        self.addNewLine()
+        self.output += f'{self.getIndent()}while {ctx.VARNAME(1)} {self.enterComparator(ctx.comparator())} {ctx.INTVAR(1)}:'
+        self.addNewLine()
+        self.indent += 1
+        self.output += f'{self.getIndent()}{ctx.VARNAME(2)}{self.enterMath_operator(ctx.math_operator())}={ctx.INTVAR(2)}'
+        self.addNewLine()
 
     # Exit a parse tree produced by HelloParser#for_statement.
     def exitFor_statement(self, ctx: HelloParser.For_statementContext):
+        self.indent -= 1
         pass
 
     # Enter a parse tree produced by HelloParser#while_statement.
@@ -211,7 +238,10 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#return_statement.
     def enterReturn_statement(self, ctx: HelloParser.Return_statementContext):
-        self.output += self.getIndent() + 'return ' + ctx.getText().removeprefix('return').removesuffix(';')
+
+        if isinstance(ctx.parentCtx.parentCtx, HelloParser.Main_funcContext) is not True:
+            self.output += self.getIndent() + 'return ' + ctx.getText().removeprefix('return').removesuffix(';')
+
         pass
 
     # Exit a parse tree produced by HelloParser#return_statement.
@@ -222,6 +252,7 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#condition.
     def enterCondition(self, ctx: HelloParser.ConditionContext):
+
         return ctx.getText()
 
     # Exit a parse tree produced by HelloParser#condition.
@@ -239,7 +270,8 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#declare_var.
     def enterDeclare_var(self, ctx: HelloParser.Declare_varContext):
-        self.output += f'{self.getIndent()}{ctx.VARNAME()}={self.enterData_type(ctx.data_type())}'
+        self.output += f'{self.getIndent()}{ctx.VARNAME()} = {self.enterData_type(ctx.data_type())}'
+        self.addNewLine()
         pass
 
     # Exit a parse tree produced by HelloParser#declare_var.
@@ -248,10 +280,16 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#declare_assign_var.
     def enterDeclare_assign_var(self, ctx: HelloParser.Declare_assign_varContext):
+        self.output += f'{self.getIndent()}'
+
+        pa_parent = ctx.parentCtx.parentCtx
+        if isinstance(pa_parent, HelloParser.Class_variableContext) and pa_parent.access_modifier() is not None:
+            self.output += f'{self.enterAccess_modifier(pa_parent.access_modifier())}'
+
         if ctx.var_value() is not None:
-            self.output += f'{self.getIndent()}{ctx.VARNAME()} = {self.enterVar_value(ctx.var_value())}'
+            self.output += f'{ctx.VARNAME()} = {self.enterVar_value(ctx.var_value())}'
         if ctx.calculation() is not None:
-            self.output += f'{self.getIndent()}{ctx.VARNAME()} = {self.enterCalculation(ctx.calculation())}'
+            self.output += f'{ctx.VARNAME()} = {self.enterCalculation(ctx.calculation())}'
 
     # Exit a parse tree produced by HelloParser#declare_assign_var.
     def exitDeclare_assign_var(self, ctx: HelloParser.Declare_assign_varContext):
@@ -288,8 +326,8 @@ class HelloListener(ParseTreeListener):
     # Enter a parse tree produced by HelloParser#printable.
     def enterPrintable(self, ctx: HelloParser.PrintableContext):
 
-        if(ctx.getText()=="endl"):
-            return '\n'
+        if (ctx.getText() == "endl"):
+            return "\"\\n\""
         return ctx.getText()
 
         pass
@@ -304,7 +342,6 @@ class HelloListener(ParseTreeListener):
 
     # Exit a parse tree produced by HelloParser#calculation.
     def exitCalculation(self, ctx: HelloParser.CalculationContext):
-
         pass
 
     # Enter a parse tree produced by HelloParser#include.
@@ -346,7 +383,7 @@ class HelloListener(ParseTreeListener):
         if ctx.INT() is not None:
             return 0
         if ctx.CHAR() or ctx.STRING() is not None:
-            return ""
+            return "\"\""
         if ctx.BOOL() is not None:
             return False
 
@@ -356,7 +393,7 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#math_operator.
     def enterMath_operator(self, ctx: HelloParser.Math_operatorContext):
-        pass
+        return ctx.getText()
 
     # Exit a parse tree produced by HelloParser#math_operator.
     def exitMath_operator(self, ctx: HelloParser.Math_operatorContext):
@@ -364,6 +401,7 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#comparator.
     def enterComparator(self, ctx: HelloParser.ComparatorContext):
+        return ctx.getText()
         pass
 
     # Exit a parse tree produced by HelloParser#comparator.

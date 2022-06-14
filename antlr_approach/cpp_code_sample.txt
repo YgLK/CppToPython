@@ -6,6 +6,7 @@ class Car{
     int year = 2019;
     private:
         int speed = 120;
+    private:
         int gear = 3;
     public:
         string name = "Carl";
@@ -20,7 +21,7 @@ string c = "abba";
 int func(){
     int num = 13;
     num = 3;
-    return a;
+    return num;
 }
 
 class Giraffe{
@@ -28,10 +29,16 @@ class Giraffe{
         int length = 3;
     public:
         int height = 13;
+
+    public:
+        int getHeight(){
+            return height;
+        }
     protected:
         int getHeight(){
             return height;
         }
+    private:
         int getLength(){
             return length;
         }
@@ -43,13 +50,11 @@ int main(){
     int a = -1;
     char b;
     a = 34;
-    a = 13 / 2;
+    c = 2*2;
 
     bool isActive = true;
 
-    for(;;){
-        return 5;
-    }
+
 
     for(int i=0; i<5; i+=1){
         cout<<a;
@@ -70,7 +75,7 @@ int main(){
 
     int g = 4 - 123;
     cout<<"Enter Your Name " << endl << "Hey";
-
+    cin >> str;
     cout<<"Hello "<<str<<" This is sample code, 152.32";
     cout << isActive;
     return 0;
