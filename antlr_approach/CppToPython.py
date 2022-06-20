@@ -67,15 +67,7 @@ from dist.HelloParser import HelloParser
 
 
 
-# from compilation_theory.antlr_approach.dist.FileErrorListener import FileErrorListener
-# from compilation_theory.antlr_approach.dist.HelloLexer import HelloLexer
-# from compilation_theory.antlr_approach.dist.HelloListener import HelloListener
-# from compilation_theory.antlr_approach.dist.HelloParser import HelloParser
 
-
-# from Python3Lexer import Python3Lexer
-# from Python3Parser import Python3Parser
-# from Python3Listener import Python3Listener
 
 
 def from_file(path, out_path="out.py"):

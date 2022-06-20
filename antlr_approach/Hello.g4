@@ -13,8 +13,8 @@ block_part:
 	| class_object;
 
 main_func:
-	return_type MAIN LPARENTH RPARENTH LBRACE func_block RBRACE SEMICOLON
-	| return_type MAIN LPARENTH RPARENTH LBRACE RBRACE SEMICOLON;
+	return_type MAIN LPARENTH RPARENTH LBRACE func_block RBRACE
+	| return_type MAIN LPARENTH RPARENTH LBRACE RBRACE;
 // | INT MAIN LPARENTH RPARENTH LBRACE func_block RBRACE SEMICOLON | VOID MAIN LPARENTH RPARENTH
 // LBRACE RBRACE SEMICOLON;
 
@@ -66,6 +66,10 @@ assign_var:
 for_statement:
 	FOR LPARENTH INT VARNAME EQUAL INTVAR SEMICOLON VARNAME comparator INTVAR SEMICOLON VARNAME
 		math_operator EQUAL INTVAR RPARENTH LBRACE func_block RBRACE
+	|FOR LPARENTH INT VARNAME EQUAL INTVAR SEMICOLON VARNAME comparator VARNAME SEMICOLON VARNAME
+		math_operator EQUAL INTVAR RPARENTH LBRACE func_block RBRACE
+	|FOR LPARENTH VARNAME EQUAL INTVAR SEMICOLON VARNAME comparator VARNAME SEMICOLON VARNAME
+		math_operator EQUAL INTVAR RPARENTH LBRACE func_block RBRACE
 	| FOR LPARENTH SEMICOLON SEMICOLON RPARENTH LBRACE func_block RBRACE;
 
 while_statement:
@@ -98,7 +102,8 @@ variable_def: declare_var | declare_assign_var;
 declare_var: data_type VARNAME SEMICOLON;
 
 declare_assign_var:
-	data_type VARNAME EQUAL var_value SEMICOLON
+    data_type VARNAME EQUAL VARNAME math_operator VARNAME SEMICOLON
+	|data_type VARNAME EQUAL var_value SEMICOLON
 	| data_type VARNAME EQUAL calculation SEMICOLON;
 
 print_out: COUT cout_expression_string SEMICOLON;
@@ -111,7 +116,7 @@ cout_expression: LBIT printable;
 
 printable: var_value | VARNAME | ENDL | STRINGVAR;
 
-    calculation: number math_operator number;
+calculation: number math_operator number;
 
 include: HASH INCLUDE LTHAN VARNAME GTHAN;
 
@@ -203,6 +208,7 @@ CLASS: 'class';
 PUBLIC: 'public';
 PRIVATE: 'private';
 PROTECTED: 'protected';
+
 
 FLOATVAR: [0-9]* '.' [0-9]+;
 INTVAR: '-'? [0-9]+;
