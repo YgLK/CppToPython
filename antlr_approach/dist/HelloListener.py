@@ -1,4 +1,5 @@
 # Generated from Hello.g4 by ANTLR 4.7.2
+import autopep8
 from antlr4 import *
 
 if __name__ is not None and "." in __name__:
@@ -32,6 +33,7 @@ class HelloListener(ParseTreeListener):
     # Exit a parse tree produced by HelloParser#program.
     def exitProgram(self, ctx: HelloParser.ProgramContext):
         # compilation_theory.antlr_approach.main.CppToPython.output_string = self.output
+        self.output = autopep8.fix_code(self.output)
         with open(f'{self.out_path}', 'w') as file:
             file.write(self.output)
         pass
@@ -187,11 +189,11 @@ class HelloListener(ParseTreeListener):
         self.output += f'{self.getIndent()}while {ctx.VARNAME(1)} {self.enterComparator(ctx.comparator())} {ctx.INTVAR(1)}:'
         self.addNewLine()
         self.indent += 1
-        self.output += f'{self.getIndent()}{ctx.VARNAME(2)}{self.enterMath_operator(ctx.math_operator())}={ctx.INTVAR(2)}'
-        self.addNewLine()
 
     # Exit a parse tree produced by HelloParser#for_statement.
     def exitFor_statement(self, ctx: HelloParser.For_statementContext):
+        self.output += f'{self.getIndent()}{ctx.VARNAME(2)}{self.enterMath_operator(ctx.math_operator())}={ctx.INTVAR(2)}'
+        self.addNewLine()
         self.indent -= 1
         pass
 

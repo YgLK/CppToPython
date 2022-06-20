@@ -259,4 +259,4 @@ bool_value: TRUE | FALSE;
    3. CLick 'Test rule program'
    4. Provide input and test if rule works fine.<br>
  or <br>
-Run `main.py` -->
+Run `CppToPython.py` -->

@@ -1,130 +1,192 @@
-# import sys
-# from antlr4 import *
-# from dist.HelloLexer import HelloLexer
-# from dist.HelloParser import HelloParser
-# from dist.HelloVisitor import HelloVisitor
-#
-#
-# def get_username():
-#     from pwd import getpwuid
-#     from os import getuid
-#
-#     return getpwuid(getuid())[0]
-#
-#
-# class MyVisitor(HelloVisitor):
-#     def visitNumberExpr(self, ctx):
-#         value = ctx.getText()
-#         return int(value)
-#
-#     def visitParenExpr(self, ctx):
-#         return self.visit(ctx.expr())
-#
-#     def visitInfixExpr(self, ctx):
-#         l = self.visit(ctx.left)
-#         r = self.visit(ctx.right)
-#
-#         op = ctx.op.text
-#         operation = {
-#             "+": lambda: l + r,
-#             "-": lambda: l - r,
-#             "*": lambda: l * r,
-#             "/": lambda: l / r,
-#         }
-#         return operation.get(op, lambda: None)()
-#
-#     def visitByeExpr(self, ctx):
-#         print("goodbye {0}".format(get_username()))
-#         sys.exit(0)
-#
-#     def visitHelloExpr(self, ctx):
-#         return "{0} {1}".format(ctx.getText(), get_username())
-#
-#
-# if __name__ == "__main__":
-#     while 1:
-#         data = InputStream(input(">>> "))
-#         # lexer
-#         lexer = MyGrammerLexer(data)
-#         stream = CommonTokenStream(lexer)
-#         # parser
-#         parser = MyGrammerParser(stream)
-#         tree = parser.expr()
-#         # evaluator
-#         visitor = MyVisitor()
-#         output = visitor.visit(tree)
-#         print(output)
-import io
-import sys
+import subprocess
 
-import antlr4.tree.Tree
-from antlr4 import *
-# from Python3Lexer import Python3Lexer
-# from Python3Parser import Python3Parser
-# from Python3Listener import Python3Listener
+from kivy.app import App
+from kivy.core.text import LabelBase
+from kivy.graphics import Color
+from kivy.properties import ListProperty
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from kivy.uix.codeinput import CodeInput
+from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.label import Label
+from kivy.uix.popup import Popup
+from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
+from kivy.uix.textinput import TextInput
+from pygments.styles import get_style_by_name
 
-from compilation_theory.antlr_approach.dist.HelloListener import HelloListener
-from compilation_theory.antlr_approach.dist.HelloLexer import HelloLexer
-from compilation_theory.antlr_approach.dist.HelloParser import HelloParser
+from compilation_theory.antlr_approach.CppToPython import CppToPython
+
+LabelBase.register(name='JetbrainsMono',
+                   fn_regular='fonts/JetBrainsMono[wght].ttf')
+
+DEFAULT_FONT = 'JetbrainsMono'
 
 
-def from_file(path, out_path="out.py"):
-    input = FileStream(path)
-    lexer = HelloLexer(input)
-    stream = CommonTokenStream(lexer)
-    parser = HelloParser(stream)
-    tree = parser.program()
+class TabbedWindow(TabbedPanel):
+    label_drag_n_drop = Label()
+    color = ListProperty([1, 1, 1, 1])
+    style = get_style_by_name("zenburn")
 
-    printer = HelloListener(out_path)
-    walker = ParseTreeWalker()
-    walker.walk(printer, tree)
-    return printer.output
+    text_input = CodeInput(font_family="JetbrainsMono", style=style, background_color=style.background_color)
+    text_output = CodeInput(font_family="JetbrainsMono", style=style, background_color=style.background_color)
+    errors_text_input = TextInput()
+
+    text_out_str = R""
+
+    text_output.text = text_out_str
+
+    path_to_file = TextInput()
+
+    def __init__(self, **kwargs):
+        super(TabbedWindow, self).__init__(**kwargs)
+        self.do_default_tab = False
+        self.tab_pos = 'top_mid'
+        self.tab_width = 200
+        # self.background_color = (1, 0, 0, .5)  # 50% translucent red
+        # self.border = [0, 0, 0, 0]
+
+        welcome_tab = TabbedPanelItem(text="Welcome!", font_family="JetbrainsMono")
+
+        welcome_float_layout = FloatLayout()
+        welcome_float_layout.add_widget(
+            Label(text="Welcome to translator", font_family="JetbrainsMono", pos_hint={'y': .3}, font_size=25,
+                  bold=True))
+        welcome_float_layout.add_widget(
+            Label(text="You can choose to translate the code either from Copy and Paste or File from the menu above.",
+                  font_family="JetbrainsMono"))
+
+        welcome_tab.add_widget(welcome_float_layout)
+        self.add_widget(welcome_tab)
+        self.home_tab = welcome_tab
+
+        ################################
+        input_tab = TabbedPanelItem(text="Read from input")
+
+        bx = GridLayout(cols=4, padding=10)
+
+        bx.add_widget(Label(size_hint=(.001, 0.1)), index=0)
+        bx.add_widget(Label(text="Copy and paste the code in C++", font_family="JetbrainsMono", size_hint=(1, 0.1)),
+                      index=0)
+        bx.add_widget(
+            Label(text="Here is place for code translated to python ", font_family="JetbrainsMono", size_hint=(1, 0.1)),
+            index=0)
+
+        bx.add_widget(Label(size_hint=(.001, .1)), index=0)
+
+        bx.add_widget(Label(text="1", size_hint=(.001, 1)))
+        bx.add_widget(self.text_input, index=0)
+
+        # self.text_output._enable_scroll = True
+
+        bx.add_widget(self.text_output)
+
+        # TODO
+        bx.add_widget(Label(size_hint=(.001, .1)))
+
+        bx.add_widget(Label(size_hint=(.001, .1)))
+
+        confirm_button = Button(text="Confirm", size_hint=(1, .1))
+        bx.add_widget(confirm_button)
+
+        confirm_button.bind(on_press=self.on_button_press_text)
+
+        execute_button = Button(text="Execute", size_hint=(1, .1))
+        execute_button.bind(on_press=self.on_button_press_execute)
+        bx.add_widget(execute_button)
+        bx.add_widget(Label(size_hint=(.001, .1)))
+
+        box_layout = BoxLayout(orientation='vertical')
+        bx.size_hint = (1, .9)
+        box_layout.add_widget(bx)
+
+        self.errors_text_input.size_hint = (1, .05)
+        self.errors_text_input._enable_scroll = True
+
+        box_layout.add_widget(self.errors_text_input)
+
+        input_tab.add_widget(box_layout)
+
+        self.add_widget(input_tab)
+
+        ################################
+
+        self.set_def_tab(welcome_tab)
+
+        file_tab = TabbedPanelItem(text="Read from file", font_family="JetbrainsMono")
+        box_layout_file_tab = FloatLayout()
+        box_layout_file_tab.add_widget(Label(text="Import a file", font_size=25, size_hint=(1, .1), pos_hint={'y': .9}))
+
+        horizontal = BoxLayout(orientation='horizontal', pos_hint={'y': .5})
+        horizontal.add_widget(
+            Label(text="Paste the absolute path to file", font_family="JetbrainsMono", size_hint=(.3, .1)))
+
+        self.path_to_file.size_hint = (.7, .1)
+        horizontal.add_widget(self.path_to_file)
+
+        box_layout_file_tab.add_widget(horizontal)
+
+        confirm_button_file = Button(text="Confirm and execute", size_hint=(1, .1), pos_hint={'y': 0})
+        confirm_button_file.bind(on_press=self.on_button_press_file)
+        box_layout_file_tab.add_widget(confirm_button_file)
+        file_tab.add_widget(box_layout_file_tab)
+        self.add_widget(file_tab)
+        self.color = [175 / 255, 238 / 255, 238 / 255, 1]
+        self.set_def_tab(welcome_tab)
+
+    def _on_file_drop(self, window, file_path):
+        self.label_drag_n_drop.color = [0, 1, 0, .8]
+
+        with self.label_drag_n_drop.canvas:
+            Color(0, 1, 1, 0.25)
+
+        print(file_path)  ####filepath
+
+        subprocess.call('start /wait python test.py', shell=True)
+
+        return
+
+    def on_button_press_text(self, arg):
+        translator = CppToPython()
+        self.text_output.text = translator.from_string(self.text_input.text)
+        self.update_errors()
+        return
+
+    def update_errors(self):
+        with open("../GUI/diag.txt", "r") as file:
+            errors_str = file.readline()
+            self.errors_text_input.text = errors_str
+        self.errors_text_input.cursor = (0, 0)
+
+    def on_button_press_file(self, arg):
+        path = str(self.path_to_file.text)
+        if not path.endswith(".cpp") and not path.endswith(".txt"):
+            popup = Popup(title='Incorrect path to file',
+                          content=Label(text="Enter correct path to file, ending with .txt or .cpp"),
+                          size_hint=(.5, .2), auto_dismiss=True)
+            self.path_to_file.text = ""
+            popup.open()
+            return
+        translator = CppToPython()
+        translator.from_file(path)
+        path.removesuffix(".cpp")
+        path.removesuffix(".txt")
+        path.join(".py")
+        subprocess.call(f'start /wait python {path}', shell=True)
+        return
+
+    @staticmethod
+    def on_button_press_execute(arg):
+        # exec(open('test.py').read())
+        subprocess.call('start /wait python out.py', shell=True)
+        return
 
 
-class CppToPython:
-    output_string = ""
+class MainWindow(App):
 
-    def from_string(self, input_string: str, out_path="out.py"):
-        lexer = HelloLexer(InputStream(input_string))
-        stream = CommonTokenStream(lexer)
-        parser = HelloParser(stream)
-        tree = parser.program()
-
-        printer = HelloListener(out_path)
-        walker = ParseTreeWalker()
-        walker.walk(printer, tree)
-        return printer.output
+    def build(self):
+        return TabbedWindow()
 
 
-def from_file(path, out_path="out.py"):
-    input = FileStream(path)
-    lexer = HelloLexer(input)
-    stream = CommonTokenStream(lexer)
-    parser = HelloParser(stream)
-    tree = parser.program()
-
-    printer = HelloListener(out_path=out_path)
-    walker = ParseTreeWalker()
-    walker.walk(printer, tree)
-
-
-def from_string(input_string: str):
-    lexer = HelloLexer(InputStream(input_string))
-    stream = CommonTokenStream(lexer)
-    parser = HelloParser(stream)
-    tree = parser.program()
-
-    printer = HelloListener("a.py")
-    walker = ParseTreeWalker()
-    walker.walk(printer, tree)
-
-
-if __name__ == '__main__':
-    if len(sys.argv) == 3 and sys.argv[1] == '-f':
-        out = sys.argv[2].removesuffix(".txt") + ".py"
-        from_file(sys.argv[2], out)
-    if len(sys.argv) == 5 and sys.argv[1] == '-f' and sys.argv[3] == '-d':
-        from_file(sys.argv[2], sys.argv[4])
-
-    translator = CppToPython()
-    from_file(path="cpp_code_sample.txt")
+if __name__ == "__main__":
+    MainWindow().run()
