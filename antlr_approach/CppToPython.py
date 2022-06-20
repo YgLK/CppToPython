@@ -56,18 +56,19 @@
 #         print(output)
 import sys
 
-# sys.path.append("/compilation_theory/antlr_approach/dist/")
-
 from antlr4 import *
 
-from dist.FileErrorListener import FileErrorListener
-from dist.HelloLexer import HelloLexer
-from dist.HelloListener import HelloListener
-from dist.HelloParser import HelloParser
+from dist_tmp.FileErrorListener import FileErrorListener
+from dist_tmp.HelloLexer import HelloLexer
+from dist_tmp.HelloListener import HelloListener
+from dist_tmp.HelloParser import HelloParser
 
 
-
-
+# sys.path.append("/compilation_theory/antlr_approach/dist/")
+# from dist_tmp.FileErrorListener import FileErrorListener
+# from dist.HelloLexer import HelloLexer
+# from dist.HelloListener import HelloListener
+# from dist.HelloParser import HelloParser
 
 
 def from_file(path, out_path="out.py"):
@@ -137,3 +138,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

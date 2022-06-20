@@ -20,6 +20,7 @@ class HelloListener(ParseTreeListener):
     indent = 0
     tab = "\t"
 
+
     def getIndent(self):
         return self.indent * self.tab
 
@@ -287,9 +288,11 @@ class HelloListener(ParseTreeListener):
             self.output += f'{self.enterAccess_modifier(pa_parent.access_modifier())}'
 
         if ctx.var_value() is not None:
-            self.output += f'{ctx.VARNAME()} = {self.enterVar_value(ctx.var_value())}'
+            self.output += f'{ctx.VARNAME(0)} = {self.enterVar_value(ctx.var_value())}'
         if ctx.calculation() is not None:
-            self.output += f'{ctx.VARNAME()} = {self.enterCalculation(ctx.calculation())}'
+            self.output += f'{ctx.VARNAME(0)} = {self.enterCalculation(ctx.calculation())}'
+        if ctx.VARNAME(1) is not None and ctx.VARNAME(2) is not None:
+            self.output += f'{ctx.VARNAME(0)} = {ctx.VARNAME(1)}{self.enterMath_operator(ctx.math_operator())}{ctx.VARNAME(2)}'
 
     # Exit a parse tree produced by HelloParser#declare_assign_var.
     def exitDeclare_assign_var(self, ctx: HelloParser.Declare_assign_varContext):
@@ -354,6 +357,7 @@ class HelloListener(ParseTreeListener):
 
     # Enter a parse tree produced by HelloParser#cin_in.
     def enterCin_in(self, ctx: HelloParser.Cin_inContext):
+
         self.output += f'{self.indent * self.tab}{ctx.VARNAME()} = input()\n'
         pass
 

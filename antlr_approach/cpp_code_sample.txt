@@ -18,6 +18,10 @@ class Car{
 int a = 3;
 string c = "abba";
 
+int b = 1;
+int a = 2;
+int c = a+b;
+
 int func(){
     int num = 13;
     num = 3;
@@ -49,6 +53,8 @@ int main(){
     string hi = "Welcome";
     int a = -1;
     char b;
+    int c = 3;
+    int g = a + c;
     a = 34;
     c = 2*2;
 

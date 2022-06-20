@@ -30,7 +30,8 @@ class TabbedWindow(TabbedPanel):
 
     text_input = CodeInput(font_family="JetbrainsMono", style=style, background_color=style.background_color)
     text_output = CodeInput(font_family="JetbrainsMono", style=style, background_color=style.background_color)
-    errors_text_input = TextInput()
+    errors_text_input_text_tab = TextInput()
+    errors_text_input_file_tab = TextInput()
 
     text_out_str = R""
 
@@ -100,10 +101,10 @@ class TabbedWindow(TabbedPanel):
         bx.size_hint = (1, .9)
         box_layout.add_widget(bx)
 
-        self.errors_text_input.size_hint = (1, .05)
-        self.errors_text_input._enable_scroll = True
+        self.errors_text_input_text_tab.size_hint = (1, .05)
+        self.errors_text_input_text_tab._enable_scroll = True
 
-        box_layout.add_widget(self.errors_text_input)
+        box_layout.add_widget(self.errors_text_input_text_tab)
 
         input_tab.add_widget(box_layout)
 
@@ -126,9 +127,18 @@ class TabbedWindow(TabbedPanel):
 
         box_layout_file_tab.add_widget(horizontal)
 
-        confirm_button_file = Button(text="Confirm and execute", size_hint=(1, .1), pos_hint={'y': 0})
+        confirm_button_file = Button(text="Confirm and execute", size_hint=(1, .1), pos_hint={'y': .05})
         confirm_button_file.bind(on_press=self.on_button_press_file)
         box_layout_file_tab.add_widget(confirm_button_file)
+
+        self.errors_text_input_file_tab.pos_hint = {'y': 0, 'x': 0}
+        self.errors_text_input_file_tab.size_hint = (1, .05)
+        self.errors_text_input_file_tab._enable_scroll = True
+
+        box_layout_file_tab.add_widget(self.errors_text_input_file_tab)
+
+        input_tab.add_widget(box_layout)
+
         file_tab.add_widget(box_layout_file_tab)
         self.add_widget(file_tab)
         self.color = [175 / 255, 238 / 255, 238 / 255, 1]
@@ -153,13 +163,15 @@ class TabbedWindow(TabbedPanel):
         return
 
     def update_errors(self):
-        with open("diag.txt", "r") as file:
+        with open("dist_tmp/diag.txt", "r") as file:
             errors_str = file.readline()
-            self.errors_text_input.text = errors_str
-        self.errors_text_input.cursor = (0, 0)
+            self.errors_text_input_text_tab.text = errors_str
+            self.errors_text_input_file_tab = errors_str
+        self.errors_text_input_text_tab.cursor = (0, 0)
 
     def on_button_press_file(self, arg):
         path = str(self.path_to_file.text)
+
         if not path.endswith(".cpp") and not path.endswith(".txt"):
             popup = Popup(title='Incorrect path to file',
                           content=Label(text="Enter correct path to file, ending with .txt or .cpp"),
@@ -167,12 +179,17 @@ class TabbedWindow(TabbedPanel):
             self.path_to_file.text = ""
             popup.open()
             return
+
+        path.replace("\\", "/")
         translator = CppToPython()
-        translator.from_file(path)
-        path.removesuffix(".cpp")
-        path.removesuffix(".txt")
-        path.join(".py")
-        subprocess.call(f'start /wait python {path}', shell=True)
+        out = path.removesuffix(".cpp")
+        out.removesuffix(".txt")
+        out += ".py"
+        translator.from_file(path, out)
+
+        self.update_errors()
+
+        subprocess.call(f'start /wait python {out}', shell=True)
         return
 
     @staticmethod

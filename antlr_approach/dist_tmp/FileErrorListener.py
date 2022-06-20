@@ -2,7 +2,7 @@ from antlr4.error.ErrorListener import ErrorListener
 
 
 class FileErrorListener(ErrorListener):
-    __path = "dist/diag.txt"
+    __path = "dist_tmp/diag.txt"
     __errors = ""
 
     def __init__(self):
