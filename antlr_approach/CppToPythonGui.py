@@ -153,7 +153,7 @@ class TabbedWindow(TabbedPanel):
         return
 
     def update_errors(self):
-        with open("../GUI/diag.txt", "r") as file:
+        with open("diag.txt", "r") as file:
             errors_str = file.readline()
             self.errors_text_input.text = errors_str
         self.errors_text_input.cursor = (0, 0)

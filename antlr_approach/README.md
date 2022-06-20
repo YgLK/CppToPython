@@ -1,30 +1,33 @@
-<h1 align="center">  Kompilator C++ do Pythona
+<h1 align="center">  Kompilator C++ do Pythona </h1>
 
-
- 
 ## Spis treści
+
 - [Informacje o projekcie](#doc_scube)
 - [Spis tokenów](#description)
 - [Gramatyka](#instructions)
 - [Instrukcja uruchomienia projektu](#servermsg)
+-
+    1. [Graficzny interfejs użytkownika](#gui)
+-
+    2. [Terminal](#cl)
 
-   
 ## Informacje o projekcie <a name="doc_scube"></a>
-Autorzy: <br>
-   * Jakub Szpunar `jszpunar@student.agh.edu.pl`
-   * Bartosz Fudali `bfudali@student.agh.edu.pl`
 
-   
+Autorzy: <br>
+
+* Jakub Szpunar `jszpunar@student.agh.edu.pl`
+* Bartosz Fudali `bfudali@student.agh.edu.pl`
+
 Główne cele i założenia projektu: <br>
-   * Translacja kodu z C++ do Pythona
-   * Możliwość uruchamiania kodu w Pythonie
-	
-	
+
+* Translacja kodu z C++ do Pythona
+* Możliwość uruchamiania kodu w Pythonie
 
 Język implementacji: Python <br>
 Generator parserów: ANTLR4
-  
+
 ## Spis tokenów <a name="description"></a>
+
 ```java
 WS: [ \t\r\n]+     // znaki białe
 
@@ -102,6 +105,7 @@ COMMENTVAR: DIV DIV VARNAME '\n';
 ```
 
 ## Gramatyka  <a name="instructions"></a>
+
 ```antlr
 program:
 	include using_namespace_std block
@@ -238,11 +242,9 @@ var_value: INTVAR | FLOATVAR | STRINGVAR | bool_value;
 bool_value: TRUE | FALSE;
 ```
 
-
 ## Instrukcja uruchomienia projektu <a name="servermsg"></a>
-	
-	# TODO
-<!-- 1. Installation: <br>
+
+1. Installation: <br>
    ANTLR4 install command:<br>
    `pip install antlr4-python3-runtime==4.7.2`<br>
    Warning! Only 4.7.2 version works with this project.
@@ -254,9 +256,40 @@ bool_value: TRUE | FALSE;
 <br>
 
 1. How to check project grammar in Pycharm:
-   1. Go to Hello.g4 file.
-   2. Right-click on the 'program' production
-   3. CLick 'Test rule program'
-   4. Provide input and test if rule works fine.<br>
- or <br>
-Run `CppToPython.py` -->
+    1. Go to Hello.g4 file.
+    2. Right-click on the 'program' production
+    3. CLick 'Test rule program'
+    4. Provide input and test if rule works fine.<br>
+       or <br>
+
+There are two ways to run translate a <code>C++</code> to a <code> Python </code>.
+
+1. [Graphical User Interface](#gui)
+2. [Command Line](#cl)
+
+### Graphical User Interface <a name = "gui"></a>
+
+In order to run the project via GUI the additional Python <code>Kivy</code> package is needed.
+
+If you use Anaconda, you can install Kivy with its package manager Conda using:
+
+`conda install kivy -c conda-forge`
+
+For further information go to <a href=https://kivy.org/doc/stable/gettingstarted/installation.html> Kivy
+documentation</a>.
+
+To run the application simply run the [CppToPythonGui.py](#CppToPythonGui.py)
+
+### Command Line <a name = "cl"></a>
+
+You can run the application from the command line as well.
+
+Go to *compilation_theory/antlr_approach* and open a command
+line. Enter `py .\CppToPython.py -f [PathToCppFile.txt] -d [PathToPythonFile.py]`.
+
+Argument `-f` specifies the file to be translated. The default output path is the same as the input file, name of the
+output file is created as follows: `[filename.txt]` `[filename.py]`
+
+Argument `-d` is **optional**, specifies the output file path. It is required to output file path ends with `.py`
+extension.
+
