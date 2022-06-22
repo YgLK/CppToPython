@@ -289,13 +289,13 @@ W projekcie zostały użyte następujące technologie:<br>
     ├── fonts                     			# Czcionki użyte w programie
     ├── tests                   			# Testy programu
     │   ├── final_correct       			# Testy na translację do języka Python
-    │   │	├── Classes.txt
-    │   │	├── HelloWorld.txt
-    │   │	└── Loops.txt
+    │   │	├── Classes.cpp
+    │   │	├── HelloWorld.cpp
+    │   │	└── Loops.cpp
     │   └── final_error         			# Testy na wyświetlanie błędów po wprowadzeniu nieprawidłowego kodu C++
-    │   	├── IncorrectCoutUse.txt
-    │   	├── InvalidCharacter.txt
-    │	└── MissingCurlyBrace.txt	
+    │   	├── IncorrectCoutUse.cpp
+    │   	├── InvalidCharacter.cpp
+    │	└── MissingCurlyBrace.cpp
     ├── CppToPython.py      			# Obsługa translacji
     ├── CppToPythonGui.py       			# Interfejs użytkownika
     ├── Hello.g4					# Plik zawierający tokeny oraz gramatykę wykorzystywaną przez ANTLR
@@ -359,7 +359,7 @@ extension.
 ### Prawidłowy kod <a name="pk"></a><br>
 Testy zawierające prawidłowo napisany kod w C++. Translacja przebiega pomyślnie.
 
-* [HelloWorld.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_correct/Classes.txt)
+* [HelloWorld.cpp](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_correct/Classes.cpp)
 
 Prosty plik `HelloWorld` zawierający deklarację zmiennych oraz przypisywanie im wartości. Znajduje się tam też kod wyświetlanie na wyjście oraz przypisywania wartości na wejściu do zmiennych.
 ```cpp
@@ -383,7 +383,7 @@ int main(){
     return 0;
 };
 ```
-Kod wynikowy z pliku `HelloWorld.txt` po translacji do języka **Python**:
+Kod wynikowy z pliku `HelloWorld.cpp` po translacji do języka **Python**:
 ```py
 if __name__ == '__main__':
     a = "test string"
@@ -399,7 +399,7 @@ if __name__ == '__main__':
 
 ```
 
-* [Loops.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_correct/Loops.txt)
+* [Loops.cpp](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_correct/Loops.cpp)
 
 Plik `Loops` zawierający definiowanie własnych metod oraz ich wywołanie wraz z obsługą pętli `for` i `while` oraz instrukcją warunkową `if`. 
 ```cpp
@@ -423,7 +423,7 @@ int main(){
     return 0;
 };
 ```
-Kod wynikowy z pliku `Loops.txt` po translacji do języka **Python**:
+Kod wynikowy z pliku `Loops.cpp` po translacji do języka **Python**:
 ```py
 def method1():
     print("First method")
@@ -458,7 +458,7 @@ if __name__ == '__main__':
     waitForInput = input()
 ```
 
-* [Classes.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_correct/Classes.txt)
+* [Classes.cpp](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_correct/Classes.cpp)
 
 Przykładowy kod zawierający zdefiniowane klasy. Każda z klas może posiadać metody oraz atrybuty wraz z określonym modyfikatorem dostępnu (`public`, `protected`, `private`).
 ```cpp
@@ -500,7 +500,7 @@ int main(){
 cout << "Classes";
 };
 ```
-Kod wynikowy z pliku `Classes.txt` po translacji do języka **Python**:
+Kod wynikowy z pliku `Classes.cpp` po translacji do języka **Python**:
 ```py
 class Car:
     year = 2019
@@ -531,7 +531,7 @@ if __name__ == '__main__':
 ### Nieprawidłowy kod <a name="nk"></a><br>
 Testy zawierające nieprawidłowo napisany kod w C++. Podczas translacji wyświetlane są zdefiniowane błędy.
 
-* [IncorrectCoutUse.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_error/IncorrectCoutUse.txt)<br>
+* [IncorrectCoutUse.cpp](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_error/IncorrectCoutUse.cpp) <br>
 W poniższym kodzie nieprawidłowo użyty został `cout`. Translator rozpoznaje błąd oraz informuje o nim użytkownika.
 ```cpp
 using namespace std;
@@ -544,7 +544,7 @@ int main(){
 };
 ```
 
-* [InvalidCharacter.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_error/InvalidCharacter.txt)<br>
+* [InvalidCharacter.cpp](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_error/InvalidCharacter.cpp) <br>
 W poniższym kodzie występuje niedozwolony znak `$`. Translator rozpoznaje błąd oraz informuje użytkownika o typie błędu oraz miejscu jego wystąpienia.
 ```cpp
 #include <iostream>
@@ -560,7 +560,7 @@ int main()
 };
 ```
 
-* [MissingCurlyBrace.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_error/MissingCurlyBrace.txt)<br>
+* [MissingCurlyBrace.cpp](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_error/MissingCurlyBrace.cpp) <br>
 W poniższym kodzie brakuje nawiasu otwierającego `{` przy funkcji `main`. Podobnie jak w poprzednich przypadkach wyświetlany jest komumnikat o błędzie.
 ```cpp
 using namespace std;
