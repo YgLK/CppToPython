@@ -120,8 +120,10 @@ block_part:
 	| class_object;
 
 main_func:
-	return_type MAIN LPARENTH RPARENTH LBRACE func_block RBRACE SEMICOLON
-	| return_type MAIN LPARENTH RPARENTH LBRACE RBRACE SEMICOLON;
+	return_type MAIN LPARENTH RPARENTH LBRACE func_block RBRACE
+	| return_type MAIN LPARENTH RPARENTH LBRACE RBRACE;
+// | INT MAIN LPARENTH RPARENTH LBRACE func_block RBRACE SEMICOLON | VOID MAIN LPARENTH RPARENTH
+// LBRACE RBRACE SEMICOLON;
 
 using_namespace_std: USING NAMESPACE STD SEMICOLON;
 
@@ -152,7 +154,8 @@ parameters:
 access_modifier: PUBLIC | PRIVATE | PROTECTED;
 
 statement:
-	variable_def
+	func_call
+	| variable_def
 	| if_statement
 	| while_statement
 	| for_statement
@@ -163,12 +166,19 @@ statement:
 	| statement statement;
 
 assign_var:
-	VARNAME EQUAL var_value SEMICOLON
+    VARNAME EQUAL VARNAME PLUS VARNAME SEMICOLON
+    | VARNAME EQUAL VARNAME PLUS var_value SEMICOLON
+    | VARNAME EQUAL var_value PLUS VARNAME SEMICOLON
+	| VARNAME EQUAL var_value SEMICOLON
 	| VARNAME EQUAL calculation SEMICOLON
 	| VARNAME EQUAL VARNAME SEMICOLON;
 
 for_statement:
 	FOR LPARENTH INT VARNAME EQUAL INTVAR SEMICOLON VARNAME comparator INTVAR SEMICOLON VARNAME
+		math_operator EQUAL INTVAR RPARENTH LBRACE func_block RBRACE
+	|FOR LPARENTH INT VARNAME EQUAL INTVAR SEMICOLON VARNAME comparator VARNAME SEMICOLON VARNAME
+		math_operator EQUAL INTVAR RPARENTH LBRACE func_block RBRACE
+	|FOR LPARENTH VARNAME EQUAL INTVAR SEMICOLON VARNAME comparator VARNAME SEMICOLON VARNAME
 		math_operator EQUAL INTVAR RPARENTH LBRACE func_block RBRACE
 	| FOR LPARENTH SEMICOLON SEMICOLON RPARENTH LBRACE func_block RBRACE;
 
@@ -202,7 +212,8 @@ variable_def: declare_var | declare_assign_var;
 declare_var: data_type VARNAME SEMICOLON;
 
 declare_assign_var:
-	data_type VARNAME EQUAL var_value SEMICOLON
+    data_type VARNAME EQUAL VARNAME math_operator VARNAME SEMICOLON
+	|data_type VARNAME EQUAL var_value SEMICOLON
 	| data_type VARNAME EQUAL calculation SEMICOLON;
 
 print_out: COUT cout_expression_string SEMICOLON;
@@ -210,6 +221,14 @@ print_out: COUT cout_expression_string SEMICOLON;
 cout_expression_string:
 	cout_expression cout_expression_string
 	| cout_expression;
+
+func_call:
+    VARNAME LPARENTH func_call_parameters RPARENTH SEMICOLON
+    | VARNAME LPARENTH RPARENTH SEMICOLON;
+
+func_call_parameters:
+    VARNAME COMMA func_call_parameters
+    | VARNAME;
 
 cout_expression: LBIT printable;
 
