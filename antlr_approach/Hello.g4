@@ -47,7 +47,8 @@ parameters:
 access_modifier: PUBLIC | PRIVATE | PROTECTED;
 
 statement:
-	variable_def
+	func_call
+	| variable_def
 	| if_statement
 	| while_statement
 	| for_statement
@@ -59,7 +60,9 @@ statement:
 
 assign_var:
     VARNAME EQUAL VARNAME PLUS VARNAME SEMICOLON
-	|VARNAME EQUAL var_value SEMICOLON
+    | VARNAME EQUAL VARNAME PLUS var_value SEMICOLON
+    | VARNAME EQUAL var_value PLUS VARNAME SEMICOLON
+	| VARNAME EQUAL var_value SEMICOLON
 	| VARNAME EQUAL calculation SEMICOLON
 	| VARNAME EQUAL VARNAME SEMICOLON;
 
@@ -111,6 +114,14 @@ print_out: COUT cout_expression_string SEMICOLON;
 cout_expression_string:
 	cout_expression cout_expression_string
 	| cout_expression;
+
+func_call:
+    VARNAME LPARENTH func_call_parameters RPARENTH SEMICOLON
+    | VARNAME LPARENTH RPARENTH SEMICOLON;
+
+func_call_parameters:
+    VARNAME COMMA func_call_parameters
+    | VARNAME;
 
 cout_expression: LBIT printable;
 

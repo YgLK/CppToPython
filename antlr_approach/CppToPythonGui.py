@@ -15,7 +15,8 @@ from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
 from kivy.uix.textinput import TextInput
 from pygments.styles import get_style_by_name
 
-from compilation_theory.antlr_approach.CppToPython import CppToPython
+
+from CppToPython import CppToPython
 
 LabelBase.register(name='JetbrainsMono',
                    fn_regular='fonts/JetBrainsMono[wght].ttf')

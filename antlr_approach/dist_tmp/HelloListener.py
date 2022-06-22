@@ -20,7 +20,6 @@ class HelloListener(ParseTreeListener):
     indent = 0
     tab = "\t"
 
-
     def getIndent(self):
         return self.indent * self.tab
 
@@ -172,6 +171,10 @@ class HelloListener(ParseTreeListener):
         self.output += f'{self.getIndent()}{ctx.VARNAME(0)} = '
         if ctx.var_value() is not None:
             self.output += self.enterVar_value(ctx.var_value())
+        # --------------------
+        if ctx.PLUS() is not None:
+            self.output += " + "
+        # --------------------
         if ctx.calculation() is not None:
             self.output += self.enterCalculation(ctx.calculation())
         if ctx.VARNAME(1) is not None:
@@ -316,6 +319,27 @@ class HelloListener(ParseTreeListener):
     def exitCout_expression_string(self, ctx: HelloParser.Cout_expression_stringContext):
 
         pass
+
+    # --------------------
+    # Enter a parse tree produced by HelloParser#func_call.
+    def enterFunc_call(self, ctx:HelloParser.Func_callContext):
+        self.output += f'{self.getIndent()}{ctx.VARNAME()}()\n'
+        pass
+
+    # Exit a parse tree produced by HelloParser#func_call.
+    def exitFunc_call(self, ctx:HelloParser.Func_callContext):
+        pass
+
+
+    # Enter a parse tree produced by HelloParser#func_call_parameters.
+    def enterFunc_call_parameters(self, ctx:HelloParser.Func_call_parametersContext):
+        pass
+
+    # Exit a parse tree produced by HelloParser#func_call_parameters.
+    def exitFunc_call_parameters(self, ctx:HelloParser.Func_call_parametersContext):
+        pass
+
+    # --------------------
 
     # Enter a parse tree produced by HelloParser#cout_expression.
     def enterCout_expression(self, ctx: HelloParser.Cout_expressionContext):
