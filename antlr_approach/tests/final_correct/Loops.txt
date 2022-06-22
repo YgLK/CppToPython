@@ -1,0 +1,26 @@
+#include<iostream>
+using namespace std;
+
+int method(){
+    for(int i=0; i<15; i += 1){
+        cout << i;
+    }
+
+    return i;
+}
+
+int main(){
+
+    for(int j = 1; j < 5; j += 1){
+		cout << j;
+        if(j == 3){
+            cout << "j is 3";
+        } else {
+            cout << "j is smaller than 5";
+        }
+    }
+
+    string waitForInput;
+    cin >> waitForInput;
+    return 0;
+};
