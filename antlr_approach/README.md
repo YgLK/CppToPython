@@ -5,6 +5,7 @@
 - [Informacje o projekcie](#doc_scube)
 - [Spis tokenów](#description)
 - [Gramatyka](#instructions)
+- [Technologie](#tech)
 - [Instrukcja uruchomienia projektu](#servermsg)
 
     1. [Graficzny interfejs użytkownika](#gui)
@@ -14,6 +15,8 @@
     1. [Prawidłowy kod](#pk)
 
     2. [Nieprawidłowy kod](#nk)
+- [Rozbugowa programu](#extend)
+
 
 ## Informacje o projekcie <a name="doc_scube"></a>
 
@@ -28,7 +31,11 @@ Główne cele i założenia projektu: <br>
 * Możliwość uruchamiania kodu w Pythonie
 
 Język implementacji: Python <br>
-Generator parserów: ANTLR4
+Generator parserów: ANTLR4 <br><br>
+Do realizacji projektu zostało użyte narzędzie ANTLR. W jego skład wchodzi lekser jak i generator parsera.
+
+Schemat projektu wygląda następująco:<br>
+`Lexer -> Parser -> Listener`
 
 ## Spis tokenów <a name="description"></a>
 
@@ -262,6 +269,13 @@ var_value: INTVAR | FLOATVAR | STRINGVAR | bool_value;
 
 bool_value: TRUE | FALSE;
 ```
+
+## Technologie <a name="tech"></a>
+W projekcie zostały użyte następujące technologie:<br>
+* Python 3.9
+* ANTLR 4.7.2
+* Kivy (GUI)
+* autopep8 (code formatting)
 
 ## Instrukcja uruchomienia projektu <a name="servermsg"></a>
 
@@ -532,3 +546,13 @@ int main()		// brakuje `{`
     return 0;
 };
 ```
+
+## Rozbugowa programu  <a name="extend"></a>
+Możliwe są rozszerzenia programu o kolejne funkcjonalności:
+* Rozszerzenie o dziedziczenie klas. 
+* Tworzenie interfejsów i klas abstrakcyjnych. 
+* Wybieranie kilku plików lub całego folderu do konwersji kodu zawartego wewnątrz.
+
+Ograniczenia programu:
+* Jednocześnie może być tłumaczony jedynie jeden plik źródłowy. 
+* Nie ma również opcji sprawdzenia historii debugowania, do każdej jednorazowej translacji jest używany jeden plik z informacją o błędach. 
