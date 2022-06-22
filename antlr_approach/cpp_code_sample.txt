@@ -15,12 +15,10 @@ class Car{
 };
 
 
-int a = 3;
-string c = "abba";
+int abbcc = 3;
+string cd = "abba";
 
-int b = 1;
-int a = 2;
-int c = a+b;
+int bc = 1;
 
 int func(){
     int num = 13;
@@ -54,7 +52,7 @@ int main(){
     int a = -1;
     char b;
     int c = 3;
-    int g = a + c;
+    int g = 15;
     a = 34;
     c = 2*2;
 
@@ -75,9 +73,6 @@ int main(){
          cout << "x is 5";
     }
 
-    while(a<5){
-        cout << a;
-    }
 
     int g = 4 - 123;
     cout<<"Enter Your Name " << endl << "Hey";
@@ -86,5 +81,4 @@ int main(){
     cout << isActive;
     return 0;
 };
-
 
