@@ -25,10 +25,13 @@ class CppToPython:
     output_string = ""
 
     def from_string(self, input_string: str, out_path="out.py"):
+        error_listener = FileErrorListener()
+
         lexer = HelloLexer(InputStream(input_string))
+        lexer.addErrorListener(error_listener)
         stream = CommonTokenStream(lexer)
         parser = HelloParser(stream)
-        parser.addErrorListener(FileErrorListener())
+        parser.addErrorListener(error_listener)
         tree = parser.program()
 
         printer = HelloListener(out_path)
@@ -37,11 +40,15 @@ class CppToPython:
         return printer.output
 
     def from_file(self, path, out_path="out.py"):
+
+        error_listener = FileErrorListener()
+
         input = FileStream(path)
         lexer = HelloLexer(input)
+        lexer.addErrorListener(error_listener)
         stream = CommonTokenStream(lexer)
         parser = HelloParser(stream)
-        parser.addErrorListener(FileErrorListener())
+        parser.addErrorListener(error_listener)
         tree = parser.program()
 
         printer = HelloListener(out_path=out_path)
