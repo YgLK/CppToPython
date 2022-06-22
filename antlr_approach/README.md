@@ -6,6 +6,7 @@
 - [Spis tokenów](#description)
 - [Gramatyka](#instructions)
 - [Technologie](#tech)
+- [Struktura projektu](#tree)
 - [Instrukcja uruchomienia projektu](#servermsg)
 
     1. [Graficzny interfejs użytkownika](#gui)
