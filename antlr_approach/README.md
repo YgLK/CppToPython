@@ -15,7 +15,7 @@
     1. [Prawidłowy kod](#pk)
 
     2. [Nieprawidłowy kod](#nk)
-- [Rozbugowa programu](#extend)
+- [Możliwości rozbudowy programu](#extend)
 
 
 ## Informacje o projekcie <a name="doc_scube"></a>
@@ -31,11 +31,15 @@ Główne cele i założenia projektu: <br>
 * Możliwość uruchamiania kodu w Pythonie
 
 Język implementacji: Python <br>
+
 Generator parserów: ANTLR4 <br><br>
 Do realizacji projektu zostało użyte narzędzie ANTLR. W jego skład wchodzi lekser jak i generator parsera.
 
 Schemat projektu wygląda następująco:<br>
 `Lexer -> Parser -> Listener`
+
+Planowany wynik działania programu: <br>
+Kompilator języka C++ do kodu w języku Python
 
 ## Spis tokenów <a name="description"></a>
 
@@ -276,6 +280,27 @@ W projekcie zostały użyte następujące technologie:<br>
 * ANTLR 4.7.2
 * Kivy (GUI)
 * autopep8 (code formatting)
+
+### Struktura projektu <a name="tree"></a>
+
+    .
+    ├── dist_tmp                    		# Pliki związane z gramatyką (np. Listener, Parser)
+    ├── fonts                     			# Czcionki użyte w programie
+    ├── tests                   			# Testy programu
+    │   ├── final_correct       			# Testy na translację do języka Python
+    │   │	├── Classes.txt
+    │   │	├── HelloWorld.txt
+    │   │	└── Loops.txt
+    │   └── final_error         			# Testy na wyświetlanie błędów po wprowadzeniu nieprawidłowego kodu C++
+    │   	├── IncorrectCoutUse.txt
+    │   	├── InvalidCharacter.txt
+    │	└── MissingCurlyBrace.txt	
+    ├── CppToPython.py      			# Obsługa translacji
+    ├── CppToPythonGui.py       			# Interfejs użytkownika
+    ├── Hello.g4					# Plik zawierający tokeny oraz gramatykę wykorzystywaną przez ANTLR
+    ├── README.md
+    ├── __init__.py
+    └── out.py
 
 ## Instrukcja uruchomienia projektu <a name="servermsg"></a>
 
@@ -547,7 +572,7 @@ int main()		// brakuje `{`
 };
 ```
 
-## Rozbugowa programu  <a name="extend"></a>
+## Możliwości rozbudowy programu  <a name="extend"></a>
 Możliwe są rozszerzenia programu o kolejne funkcjonalności:
 * Rozszerzenie o dziedziczenie klas. 
 * Tworzenie interfejsów i klas abstrakcyjnych. 
