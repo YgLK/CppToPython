@@ -10,6 +10,10 @@
     1. [Graficzny interfejs użytkownika](#gui)
 -
     2. [Terminal](#cl)
+- [Testy](#tests)
+    1. [Prawidłowy kod](#pk)
+-
+    2. [Nieprawidłowy kod](#nk)
 
 ## Informacje o projekcie <a name="doc_scube"></a>
 
@@ -310,3 +314,219 @@ output file is created as follows: `[filename.txt]` `[filename.py]`
 Argument `-d` is **optional**, specifies the output file path. It is required to output file path ends with `.py`
 extension.
 
+
+## Testy  <a name="tests"></a>
+### Prawidłowy kod <a name="pk"></a><br>
+Testy zawierające prawidłowo napisany kod w C++. Translacja przebiega pomyślnie.
+
+* [HelloWorld.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_correct/Classes.txt)
+
+Prosty plik `HelloWorld` zawierający deklarację zmiennych oraz przypisywanie im wartości. Znajduje się tam też kod wyświetlanie na wyjście oraz przypisywania wartości na wejściu do zmiennych.
+```cpp
+#include<iostream>
+using namespace std;
+
+int main(){
+
+    string a = "test string";
+    int b = 4;
+    int c = 3*12;
+    string test = "Test string";
+    cout << test;
+    cout << "Enter text:";
+    cin >> a;
+    cout << a;
+
+    string waitForInput;
+    cin >> waitForInput;
+
+    return 0;
+};
+```
+Kod wynikowy z pliku `HelloWorld.txt` po translacji do języka **Python**:
+```py
+if __name__ == '__main__':
+    a = "test string"
+    b = 4
+    c = 3*12
+    test = "Test string"
+    print(test)
+    print("Enter text:")
+    a = input()
+    print(a)
+    waitForInput = ""
+    waitForInput = input()
+
+```
+
+* [Loops.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_correct/Loops.txt)
+
+Plik `Loops` zawierający definiowanie własnych metod oraz ich wywołanie wraz z obsługą pętli `for` i `while` oraz instrukcją warunkową `if`. 
+```cpp
+#include<iostream>
+using namespace std;
+
+int main(){
+
+    string a = "test string";
+    int b = 4;
+    int c = 3*12;
+    string test = "Test string";
+    cout << test;
+    cout << "Enter text:";
+    cin >> a;
+    cout << a;
+
+    string waitForInput;
+    cin >> waitForInput;
+
+    return 0;
+};
+```
+Kod wynikowy z pliku `Loops.txt` po translacji do języka **Python**:
+```py
+def method1():
+    print("First method")
+    i = 0
+    while i < 15:
+        print(i)
+        i += 1
+    return i
+
+
+def method2():
+    print("Second method")
+    k = 0
+    while k < 3:
+        print("Hi")
+        k = 1 + k
+
+
+if __name__ == '__main__':
+    method1()
+    method2()
+    print("For loop")
+    j = 1
+    while j < 5:
+        print(j)
+        if j == 3:
+            print("j is 3")
+        else:
+            print("j is smaller than 5")
+        j += 1
+    waitForInput = ""
+    waitForInput = input()
+```
+
+* [Classes.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_correct/Classes.txt)
+
+Przykładowy kod zawierający zdefiniowane klasy. Każda z klas może posiadać metody oraz atrybuty wraz z określonym modyfikatorem dostępnu (`public`, `protected`, `private`).
+```cpp
+using namespace std;
+
+class Car{
+    int year = 2019;
+    private:
+        int speed = 120;
+    private:
+        int gear = 3;
+    public:
+        string name = "Carl";
+    protected:
+        bool isSafe = true;
+};
+
+class Giraffe{
+    private:
+        int length = 3;
+    public:
+        int height = 13;
+
+    public:
+        int getHeight(){
+            return height;
+        }
+    protected:
+        int getHeight(){
+            return height;
+        }
+    private:
+        int getLength(){
+            return length;
+        }
+};
+
+int main(){
+cout << "Classes";
+};
+```
+Kod wynikowy z pliku `Classes.txt` po translacji do języka **Python**:
+```py
+class Car:
+    year = 2019
+    __speed = 120
+    __gear = 3
+    name = "Carl"
+    _isSafe = True
+
+
+class Giraffe:
+    __length = 3
+    height = 13
+
+    def getHeight(self):
+        return height
+
+    def _getHeight(self):
+        return height
+
+    def __getLength(self):
+        return length
+
+
+if __name__ == '__main__':
+    print("Classes")
+```
+
+### Nieprawidłowy kod <a name="nk"></a><br>
+Testy zawierające nieprawidłowo napisany kod w C++. Podczas translacji wyświetlane są zdefiniowane błędy.
+
+* [IncorrectCoutUse.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_error/IncorrectCoutUse.txt)<br>
+W poniższym kodzie nieprawidłowo użyty został `cout`. Translator rozpoznaje błąd oraz informuje o nim użytkownika.
+```cpp
+using namespace std;
+
+int main(){
+    int a;
+    cout >> "Hello world";	// prawidłowo powinno być `cout <<` zamiast `cout >>` 
+    cin >> a;
+    return 0;
+};
+```
+* [InvalidCharacter.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_error/InvalidCharacter.txt)<br>
+W poniższym kodzie występuje niedozwolony znak `$`. Translator rozpoznaje błąd oraz informuje użytkownika o typie błędu oraz miejscu jego wystąpienia.
+```cpp
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int a = 5;
+    int b = 10;
+    int temp;$		// nieprawidłowy znak `$`
+
+    return 0;
+};
+```
+* [MissingCurlyBrace.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_error/MissingCurlyBrace.txt)<br>
+W poniższym kodzie brakuje nawiasu otwierającego `{` przy funkcji `main`. Podobnie jak w poprzednich przypadkach wyświetlany jest komumnikat o błędzie.
+```cpp
+using namespace std;
+
+int main()		// brakuje `{`
+    cout << "Hello World";
+    int a;
+    cin >> a;
+    return 0;
+};
+```
