@@ -88,7 +88,7 @@ class TabbedWindow(TabbedPanel):
 
         bx.add_widget(Label(size_hint=(.001, .1)))
 
-        confirm_button = Button(text="Confirm", size_hint=(1, .1))
+        confirm_button = Button(text="Translate", size_hint=(1, .1))
         bx.add_widget(confirm_button)
 
         confirm_button.bind(on_press=self.on_button_press_text)
