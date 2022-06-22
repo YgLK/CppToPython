@@ -6,13 +6,13 @@
 - [Spis tokenów](#description)
 - [Gramatyka](#instructions)
 - [Instrukcja uruchomienia projektu](#servermsg)
--
+
     1. [Graficzny interfejs użytkownika](#gui)
--
+
     2. [Terminal](#cl)
 - [Testy](#tests)
     1. [Prawidłowy kod](#pk)
--
+
     2. [Nieprawidłowy kod](#nk)
 
 ## Informacje o projekcie <a name="doc_scube"></a>
@@ -503,6 +503,7 @@ int main(){
     return 0;
 };
 ```
+
 * [InvalidCharacter.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_error/InvalidCharacter.txt)<br>
 W poniższym kodzie występuje niedozwolony znak `$`. Translator rozpoznaje błąd oraz informuje użytkownika o typie błędu oraz miejscu jego wystąpienia.
 ```cpp
@@ -518,6 +519,7 @@ int main()
     return 0;
 };
 ```
+
 * [MissingCurlyBrace.txt](https://github.com/YgLK/compilation_theory/blob/main/antlr_approach/tests/final_error/MissingCurlyBrace.txt)<br>
 W poniższym kodzie brakuje nawiasu otwierającego `{` przy funkcji `main`. Podobnie jak w poprzednich przypadkach wyświetlany jest komumnikat o błędzie.
 ```cpp
